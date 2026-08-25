@@ -2285,6 +2285,17 @@
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #f0f0f0; }
         ::-webkit-scrollbar-thumb { background: #e8511b; border-radius: 10px; }
+        .customer-review-box { margin-top: 18px; padding: 16px; border: 1px solid #f0f0f0; border-radius: 14px; background: #fffaf7; }
+        .customer-review-box h3 { margin: 0 0 12px; color: #bf360c; font-size: 17px; }
+        .customer-review-form { display: grid; gap: 9px; }
+        .customer-review-form input, .customer-review-form select, .customer-review-form textarea,
+        .checkout-modal-box select { width: 100%; box-sizing: border-box; border: 2px solid #e0e0e0; border-radius: 10px; padding: 10px 12px; font: inherit; background: #fff; }
+        .customer-review-form button { border: 0; border-radius: 30px; padding: 10px 14px; background: #e8511b; color: #fff; font-weight: 700; cursor: pointer; }
+        .customer-review-list { display: grid; gap: 9px; margin-top: 13px; }
+        .customer-review-item { background: #fff; border: 1px solid #f0e3dc; border-radius: 10px; padding: 11px; }
+        .customer-review-item strong { color: #5d4037; }
+        .customer-review-item small { color: #8d6e63; display: block; margin-top: 4px; }
+        .customer-review-login { color: #795548; font-size: 13px; margin-bottom: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #bf360c; }
         @keyframes slideUp {
             from { transform: translateY(30px); opacity: 0; }
@@ -2295,6 +2306,16 @@
             to { opacity: 1; }
         }
     </style>
+    <!-- Supabase JavaScript client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+        const SUPABASE_URL = 'https://klyfcanmbqwqqznsaaqe.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_Lwj1KhUbirEL2FD3HDV8Bw_hVxBoZFF';
+        const supabaseClient = window.supabase.createClient(
+            SUPABASE_URL,
+            SUPABASE_PUBLISHABLE_KEY
+        );
+    </script>
 </head>
 <body>
 
@@ -2396,10 +2417,28 @@
             <div class="modal-price" id="modalPrice">₹0.00 <span>INR</span></div>
             <div class="modal-desc" id="modalDesc"></div>
             <button class="modal-add-btn" id="modalAddBtn" onclick="addToCart()"><i class="fas fa-cart-plus"></i> Add to Cart</button>
+            <div class="customer-review-box" id="customerReviewBox">
+                <h3><i class="fas fa-star"></i> Ratings &amp; Reviews</h3>
+                <div id="customerReviewLogin" class="customer-review-login"></div>
+                <form id="customerReviewForm" class="customer-review-form" onsubmit="submitCustomerReview(event)">
+                    <select id="customerReviewRating" required>
+                        <option value="">Select Rating</option>
+                        <option value="5">5 - Excellent</option>
+                        <option value="4">4 - Very Good</option>
+                        <option value="3">3 - Good</option>
+                        <option value="2">2 - Average</option>
+                        <option value="1">1 - Poor</option>
+                    </select>
+                    <input id="customerReviewTitle" maxlength="100" placeholder="Review title" />
+                    <textarea id="customerReviewText" maxlength="1000" rows="3" placeholder="Write your review"></textarea>
+                    <button type="submit" id="customerReviewSubmit">Submit Review</button>
+                </form>
+                <div class="customer-review-list" id="customerReviewList"></div>
+            </div>
         </div>
     </div>
     <div class="cart-modal-overlay" id="cartModal"><div class="cart-modal-box"><div class="cart-header"><h2><i class="fas fa-shopping-cart"></i> Your Cart</h2><button class="cart-close" onclick="closeCartModal()">&times;</button></div><div class="cart-items" id="cartItems"></div><div class="cart-footer"><div class="cart-total"><span>Total:</span><span class="total-amount" id="cartTotal">₹0.00</span></div><button class="checkout-btn" id="checkoutBtn" onclick="openCheckoutForm()"><i class="fas fa-credit-card"></i> Proceed to Checkout</button></div></div></div>
-    <div class="checkout-modal-overlay" id="checkoutModal"><div class="checkout-modal-box"><div class="checkout-header"><h2><i class="fas fa-user"></i> Customer Details</h2><button class="checkout-close" onclick="closeCheckoutForm()">&times;</button></div><form id="checkoutForm" onsubmit="placeOrder(event)"><div class="form-group"><label>Full Name <span class="required">*</span></label><input type="text" id="custName" placeholder="Enter your full name" required /></div><div class="form-row"><div class="form-group"><label>Email <span class="required">*</span></label><input type="email" id="custEmail" placeholder="your@gmail.com" required /></div><div class="form-group"><label>Phone <span class="required">*</span></label><input type="tel" id="custPhone" placeholder="9876543210" required /></div></div><div class="form-group"><label>Delivery Address <span class="required">*</span></label><textarea id="custAddress" placeholder="Street, City, State, Pincode" required></textarea></div><div class="form-group"><label>Order Notes (Optional)</label><textarea id="custNotes" placeholder="Any special instructions..."></textarea></div><div class="checkout-summary"><span>Order Total:</span><span class="summary-amount" id="checkoutTotal">₹0.00</span></div><button type="submit" class="place-order-btn" id="placeOrderBtn"><i class="fas fa-check-circle"></i> Place Order</button></form></div></div>
+    <div class="checkout-modal-overlay" id="checkoutModal"><div class="checkout-modal-box"><div class="checkout-header"><h2><i class="fas fa-user"></i> Customer Details</h2><button class="checkout-close" onclick="closeCheckoutForm()">&times;</button></div><form id="checkoutForm" onsubmit="placeOrder(event)"><div class="form-group"><label>Full Name <span class="required">*</span></label><input type="text" id="custName" placeholder="Enter your full name" required /></div><div class="form-row"><div class="form-group"><label>Email <span class="required">*</span></label><input type="email" id="custEmail" placeholder="your@gmail.com" required /></div><div class="form-group"><label>Phone <span class="required">*</span></label><input type="tel" id="custPhone" placeholder="9876543210" required /></div></div><div class="form-group"><label>Delivery Address <span class="required">*</span></label><textarea id="custAddress" placeholder="Street, City, State, Pincode" required></textarea></div><div class="form-group"><label>Payment Method <span class="required">*</span></label><select id="custPaymentMethod" required><option>Cash on Delivery</option><option>UPI</option><option>Credit Card</option><option>Debit Card</option><option>Net Banking</option><option>Wallet</option></select></div><div class="form-group"><label>Order Notes (Optional)</label><textarea id="custNotes" placeholder="Any special instructions..."></textarea></div><div class="checkout-summary"><span>Order Total:</span><span class="summary-amount" id="checkoutTotal">₹0.00</span></div><button type="submit" class="place-order-btn" id="placeOrderBtn"><i class="fas fa-check-circle"></i> Place Order</button></form></div></div>
     <div class="order-detail-modal-overlay" id="orderDetailModal"><div class="order-detail-modal-box"><button class="modal-close" onclick="closeOrderDetail()">&times;</button><h2><i class="fas fa-receipt"></i> Order Details</h2><div id="orderDetailContent"></div></div></div>
 
     <!-- ============================================================ -->
@@ -2409,11 +2448,7 @@
         <div class="auth-modal-box">
             <button class="auth-modal-close" onclick="closeAuthModal()">&times;</button>
             <div class="auth-logo"><i class="fas fa-store-alt"></i> Favlor Store</div>
-            <div class="auth-subtitle">Sign in to track orders & shop faster</div>
-            <div class="auth-tabs">
-                <button class="active" data-tab="login" onclick="switchAuthTabModal('login')">Login</button>
-                <button data-tab="register" onclick="switchAuthTabModal('register')">Register</button>
-            </div>
+            <div class="auth-subtitle" id="authSubtitle">Sign in to track orders &amp; shop faster</div>
 
             <form class="auth-form active" id="loginFormModal" onsubmit="handleLoginModal(event)" novalidate>
                 <div class="form-group"><label>Email</label><div class="input-wrapper"><input type="email" id="loginEmailModal" placeholder="your@gmail.com" /></div><div class="field-error" id="loginEmailError"></div></div>
@@ -2422,7 +2457,6 @@
                 <div id="loginErrorModal" class="auth-error"></div>
                 <div id="loginSuccessModal" class="auth-success"></div>
                 <button type="submit" class="auth-btn">Login</button>
-                <div class="auth-switch">Don't have an account? <span onclick="switchAuthTabModal('register')">Register</span></div>
             </form>
 
             <form class="auth-form" id="registerFormModal" onsubmit="handleRegisterModal(event)" novalidate>
@@ -2436,7 +2470,6 @@
                 <div id="registerErrorModal" class="auth-error"></div>
                 <div id="registerSuccessModal" class="auth-success"></div>
                 <button type="submit" class="auth-btn" id="registerBtn">Create Account</button>
-                <div class="auth-switch">Already have an account? <span onclick="switchAuthTabModal('login')">Login</span></div>
             </form>
         </div>
     </div>
@@ -2476,7 +2509,8 @@
             return defaultSettings;
         }
 
-        function getProducts() {
+        // Kept only so older browser data is not lost. Customer products now come from Supabase.
+        function getLegacyProducts() {
             try {
                 const raw = localStorage.getItem(STORAGE_KEY);
                 if (raw) { const data = JSON.parse(raw); if (Array.isArray(data)) return data; }
@@ -2516,12 +2550,129 @@
             return defaultProducts;
         }
 
-        function saveProducts(products) {
+        function saveLegacyProducts(products) {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(products));
             window.dispatchEvent(new StorageEvent('storage', { key: STORAGE_KEY, newValue: JSON.stringify(products),
                 storageArea: localStorage }));
+        }
+
+        let productsCache = [];
+        let productRealtimeChannel = null;
+        let productReloadTimer = null;
+
+        function getProducts() {
+            return productsCache;
+        }
+
+        function productNumber(value, fallback = 0) {
+            const number = Number(value);
+            return Number.isFinite(number) ? number : fallback;
+        }
+
+        function normalizeProductImages(value) {
+            if (Array.isArray(value)) return value.filter(item => typeof item === 'string' && item.trim());
+            if (typeof value !== 'string' || !value.trim()) return [];
+
+            const trimmed = value.trim();
+            if (trimmed.startsWith('[')) {
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    if (Array.isArray(parsed)) return parsed.filter(item => typeof item === 'string' && item.trim());
+                } catch (_) {}
+            }
+            return [trimmed];
+        }
+
+        function mapCustomerProduct(row) {
+            const images = normalizeProductImages(row.images);
+            const primaryImage = (typeof row.image === 'string' && row.image.trim()) ? row.image.trim() :
+                (images[0] || PRODUCT_IMAGE_PLACEHOLDER);
+            if (primaryImage !== PRODUCT_IMAGE_PLACEHOLDER && !images.includes(primaryImage)) images.unshift(primaryImage);
+
+            const stockQty = productNumber(row.stockQty ?? row.stock, 0);
+            return {
+                ...row,
+                id: productNumber(row.id),
+                name: String(row.name || 'Unnamed Product'),
+                brand: String(row.brand || ''),
+                category: String(row.category || 'Other'),
+                description: String(row.description || ''),
+                price: productNumber(row.price),
+                originalPrice: row.originalPrice == null ? 0 : productNumber(row.originalPrice),
+                discount: productNumber(row.discount),
+                savedAmount: productNumber(row.savedAmount),
+                stock: productNumber(row.stock ?? row.stockQty),
+                stockQty,
+                reorderLevel: productNumber(row.reorderLevel),
+                rating: productNumber(row.rating),
+                reviewCount: productNumber(row.reviewCount),
+                soldCount: productNumber(row.soldCount),
+                images,
+                image: primaryImage,
+                availability: row.availability || (stockQty > 0 ? 'in_stock' : 'out_of_stock'),
+                dateAdded: row.dateAdded || row.updatedDate || new Date(0).toISOString()
+            };
+        }
+
+        function showProductsLoading() {
+            const container = document.getElementById('productHorizontal');
+            const resultCount = document.getElementById('resultCount');
+            if (container) {
+                container.innerHTML =
+                    `<div class="empty-state-h"><i class="fas fa-spinner fa-spin"></i><h3>Loading products...</h3><p>Please wait a moment.</p></div>`;
+            }
+            if (resultCount) resultCount.textContent = 'Loading...';
+        }
+
+        function showProductsLoadError() {
+            const container = document.getElementById('productHorizontal');
+            const resultCount = document.getElementById('resultCount');
+            if (container) {
+                container.innerHTML =
+                    `<div class="empty-state-h"><i class="fas fa-triangle-exclamation"></i><h3>Products could not be loaded</h3><p>Check the Supabase view and RLS policy, then refresh.</p></div>`;
+            }
+            if (resultCount) resultCount.textContent = 'Load failed';
+        }
+
+        async function loadProductsFromSupabase({ showLoading = false, showErrorToast = true } = {}) {
+            if (showLoading) showProductsLoading();
+
+            const { data, error } = await supabaseClient
+                .from('customer_products')
+                .select('*')
+                .order('dateAdded', { ascending: false });
+
+            if (error) {
+                console.error('Supabase customer_products load failed:', error);
+                if (productsCache.length) applyFilters();
+                else showProductsLoadError();
+                if (showErrorToast) showToast('Products load ஆகவில்லை. Supabase setup check பண்ணுங்க.', 'error');
+                return false;
+            }
+
+            productsCache = (data || []).map(mapCustomerProduct);
             applyFilters();
-            showToast('Products updated!', 'success');
+            return true;
+        }
+
+        function scheduleProductsReload() {
+            window.clearTimeout(productReloadTimer);
+            productReloadTimer = window.setTimeout(() => {
+                loadProductsFromSupabase({ showErrorToast: false });
+            }, 250);
+        }
+
+        function subscribeToProductChanges() {
+            if (productRealtimeChannel) return;
+            productRealtimeChannel = supabaseClient
+                .channel('customer-product-sync')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'products' }, scheduleProductsReload)
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'stores' }, scheduleProductsReload)
+                .subscribe(status => {
+                    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                        console.error('Supabase product Realtime status:', status);
+                    }
+                });
         }
 
         function productAvailability(p) {
@@ -3254,10 +3405,18 @@
         }
 
         function switchAuthTabModal(tab) {
-            document.querySelectorAll('#authModal .auth-tabs button').forEach(b => b.classList.toggle('active', b.dataset
-                .tab === tab));
-            document.getElementById('loginFormModal').classList.toggle('active', tab === 'login');
-            document.getElementById('registerFormModal').classList.toggle('active', tab === 'register');
+            const selectedTab = tab === 'register' ? 'register' : 'login';
+            const isLogin = selectedTab === 'login';
+            document.getElementById('loginFormModal').classList.toggle('active', isLogin);
+            document.getElementById('registerFormModal').classList.toggle('active', !isLogin);
+            document.getElementById('authSubtitle').textContent = isLogin
+                ? 'Sign in to track orders & shop faster'
+                : 'Create your account to start shopping';
+
+            window.setTimeout(() => {
+                const firstInput = document.querySelector(`#${isLogin ? 'loginFormModal' : 'registerFormModal'} input`);
+                if (firstInput) firstInput.focus();
+            }, 0);
         }
 
         function togglePasswordModal(id, btn) {
@@ -3428,8 +3587,7 @@
         // =============================================================
         // 3. INIT
         // =============================================================
-        // Load data
-        getProducts();
+        // Load customer data. Products come from Supabase; customer-only data stays in this browser.
         getUsers();
         getOrders();
         getSettings();
@@ -3437,9 +3595,11 @@
         // Update UI based on login status
         updateUserUI();
         updateCartUI(getCartItems());
-        applyFilters();
         updateOrderBadge();
         switchView('products');
+        showProductsLoading();
+        subscribeToProductChanges();
+        loadProductsFromSupabase();
 
         // Welcome toast
         setTimeout(() => {
@@ -3450,8 +3610,6 @@
 
         // Storage sync (for multi-tab support)
         window.addEventListener('storage', (e) => {
-            if (e.key === STORAGE_KEY) { applyFilters();
-                showToast('🔄 Products updated', 'warning'); }
             if (e.key === ORDERS_KEY) {
                 if (currentView === 'orders') renderOrders();
                 updateOrderBadge();
@@ -3488,8 +3646,682 @@
 
         console.log('✅ Customer Portal loaded successfully.');
         console.log('💡 Admin and Super Admin portals are NOT included in this file.');
-        console.log('📦 All data is stored in localStorage and syncs across tabs.');
+        console.log('📦 Products load from Supabase and refresh through Realtime.');
     </script>
 
+<script>
+// ===== SUPABASE CUSTOMER AUTH + REGISTRATION SYNC =====
+(function () {
+    function setCustomerAuthState(user) {
+        if (user) {
+            localStorage.setItem('favlor_auth', JSON.stringify({
+                id: user.id,
+                name: user.name || 'Customer',
+                email: user.email || '',
+                phone: user.phone || '',
+                role: 'customer'
+            }));
+        } else {
+            localStorage.removeItem('favlor_auth');
+        }
+        updateUserUI();
+    }
+
+    async function getCustomerProfile(authUser) {
+        const { data, error } = await supabaseClient
+            .from('customers')
+            .select('id, full_name, email, phone, status')
+            .eq('auth_user_id', authUser.id)
+            .maybeSingle();
+        if (error) throw error;
+        if (!data) throw new Error('Customer profile not found. Please contact support.');
+        if (data.status !== 'Active') throw new Error(`Customer account is ${data.status}.`);
+        return {
+            id: authUser.id,
+            name: data?.full_name || authUser.user_metadata?.name || authUser.email?.split('@')[0] || 'Customer',
+            email: data?.email || authUser.email || '',
+            phone: data?.phone || authUser.user_metadata?.phone || '',
+            role: 'customer'
+        };
+    }
+
+    window.handleRegisterModal = async function (event) {
+        event.preventDefault();
+        document.querySelectorAll('#registerFormModal .field-error').forEach(element => element.textContent = '');
+        document.getElementById('registerErrorModal').textContent = '';
+        document.getElementById('registerSuccessModal').textContent = '';
+
+        const name = document.getElementById('regNameModal').value.trim();
+        const email = document.getElementById('regEmailModal').value.trim().toLowerCase();
+        const phone = document.getElementById('regPhoneModal').value.trim();
+        const password = document.getElementById('regPasswordModal').value;
+        const confirmPassword = document.getElementById('regConfirmPasswordModal').value;
+        const termsAccepted = document.getElementById('regTermsModal').checked;
+        const button = document.getElementById('registerBtn');
+
+        if (!name || !email || !phone || !password || !confirmPassword || !termsAccepted) {
+            showToast('Please fill in all fields.', 'error');
+            return;
+        }
+        if (password.length < 6) {
+            document.getElementById('regPasswordError').innerHTML =
+                '<i class="fas fa-exclamation-circle"></i> Min 6 characters.';
+            return;
+        }
+        if (password !== confirmPassword) {
+            document.getElementById('regConfirmError').innerHTML =
+                '<i class="fas fa-exclamation-circle"></i> Passwords do not match.';
+            return;
+        }
+
+        button.disabled = true;
+        button.textContent = 'Creating Account...';
+        try {
+            const { data, error } = await supabaseClient.auth.signUp({
+                email,
+                password,
+                options: { data: { name, full_name: name, phone } }
+            });
+            if (error) throw error;
+            if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+                throw new Error('This email is already registered. Please login.');
+            }
+
+            document.getElementById('registerFormModal').reset();
+            if (data.session && data.user) {
+                setCustomerAuthState({ id: data.user.id, name, email, phone });
+                closeAuthModal();
+                showToast(`Welcome ${name}! Your account has been created.`, 'success');
+            } else {
+                document.getElementById('registerSuccessModal').textContent =
+                    'Account created. Please verify your email, then login.';
+                showToast('Account created. Check your email for verification.', 'success');
+            }
+        } catch (error) {
+            console.error('Supabase customer registration error:', error);
+            document.getElementById('registerErrorModal').textContent = error.message || 'Unable to create account.';
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Create Account';
+        }
+    };
+
+    window.handleLoginModal = async function (event) {
+        event.preventDefault();
+        const errorBox = document.getElementById('loginErrorModal');
+        const form = document.getElementById('loginFormModal');
+        const button = form.querySelector('.auth-btn');
+        const email = document.getElementById('loginEmailModal').value.trim().toLowerCase();
+        const password = document.getElementById('loginPasswordModal').value;
+        errorBox.textContent = '';
+
+        button.disabled = true;
+        button.textContent = 'Logging in...';
+        try {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+            if (error) throw error;
+            const profile = await getCustomerProfile(data.user);
+            setCustomerAuthState(profile);
+            closeAuthModal();
+            form.reset();
+            showToast(`Welcome back, ${profile.name}!`, 'success');
+        } catch (error) {
+            console.error('Supabase customer login error:', error);
+            await supabaseClient.auth.signOut().catch(() => {});
+            errorBox.textContent = error.message || 'Invalid email or password.';
+        } finally {
+            button.disabled = false;
+            button.textContent = 'Login';
+        }
+    };
+
+    window.handleLogout = async function () {
+        if (!confirm('Are you sure you want to logout?')) return;
+        await supabaseClient.auth.signOut();
+        setCustomerAuthState(null);
+        document.getElementById('userDropdown').classList.remove('open');
+        showToast('Logged out successfully.', 'warning');
+    };
+
+    async function restoreCustomerSession() {
+        try {
+            const { data } = await supabaseClient.auth.getSession();
+            if (!data.session?.user) return;
+            const profile = await getCustomerProfile(data.session.user);
+            setCustomerAuthState(profile);
+        } catch (error) {
+            console.error('Customer session restore error:', error);
+            await supabaseClient.auth.signOut().catch(() => {});
+            setCustomerAuthState(null);
+            showToast(error.message || 'Customer session could not be restored.', 'error');
+        }
+    }
+
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_OUT') setCustomerAuthState(null);
+        if (event === 'SIGNED_IN' && session?.user) {
+            window.setTimeout(restoreCustomerSession, 0);
+        }
+    });
+    restoreCustomerSession();
+})();
+</script>
+<script id="favlor-customer-full-database-sync">
+// ===== FULL SUPABASE SYNC: CART, WISHLIST, COMPARE, ORDERS, PAYMENTS AND REVIEWS =====
+(function () {
+    const GUEST_CART_KEY = 'favlor_guest_cart';
+    const customerState = {
+        user: null,
+        customer: null,
+        carts: [],
+        cart: [],
+        orders: [],
+        payments: []
+    };
+    let customerRealtimeChannel = null;
+    let customerReloadTimer = null;
+
+    const readArray = key => {
+        try {
+            const value = JSON.parse(localStorage.getItem(key) || '[]');
+            return Array.isArray(value) ? value : [];
+        } catch (_) { return []; }
+    };
+    const writeArray = (key, value) => localStorage.setItem(key, JSON.stringify(value));
+
+    async function loadCustomerContext() {
+        const { data: sessionData } = await supabaseClient.auth.getSession();
+        const user = sessionData.session?.user;
+        if (!user) {
+            customerState.user = null;
+            customerState.customer = null;
+            return null;
+        }
+        const { data: customer, error } = await supabaseClient
+            .from('customers')
+            .select('id,auth_user_id,store_id,full_name,email,phone,address,city,state,pincode,status')
+            .eq('auth_user_id', user.id)
+            .maybeSingle();
+        if (error) throw error;
+        if (!customer) throw new Error('Customer profile not found.');
+        if (customer.status !== 'Active') throw new Error(`Customer account is ${customer.status}.`);
+        customerState.user = user;
+        customerState.customer = customer;
+        return { user, customer };
+    }
+
+    async function requireCustomerLogin() {
+        try {
+            const context = await loadCustomerContext();
+            if (context) return context;
+        } catch (error) {
+            showToast(error.message || 'Unable to read customer profile.', 'error');
+            return null;
+        }
+        showToast('Please login to continue.', 'warning');
+        openAuthModal('login');
+        return null;
+    }
+
+    function mapCartItem(row, cartStoreId) {
+        const product = Array.isArray(row.products) ? row.products[0] : row.products;
+        const images = Array.isArray(product?.images) ? product.images.filter(Boolean) : [];
+        return {
+            _cartItemId: row.id,
+            _cartId: row.cart_id,
+            id: Number(row.product_id),
+            storeId: product?.store_id || cartStoreId,
+            name: product?.name || 'Product',
+            price: Number(product?.price || 0),
+            image: images[0] || PRODUCT_IMAGE_PLACEHOLDER,
+            availability: product?.availability || 'in_stock',
+            stock: Number(product?.stock_quantity || 0),
+            quantity: Number(row.quantity || 1)
+        };
+    }
+
+    async function loadCustomerCart() {
+        if (!customerState.user) return false;
+        const { data: carts, error: cartError } = await supabaseClient
+            .from('carts').select('id,store_id,status')
+            .eq('user_id', customerState.user.id).eq('status', 'active');
+        if (cartError) throw cartError;
+        customerState.carts = carts || [];
+        if (!customerState.carts.length) {
+            customerState.cart = [];
+        } else {
+            const cartIds = customerState.carts.map(cart => cart.id);
+            const { data, error } = await supabaseClient
+                .from('cart_items')
+                .select('id,cart_id,product_id,quantity,products(id,store_id,name,price,images,availability,status,stock_quantity)')
+                .in('cart_id', cartIds).order('created_at', { ascending: true });
+            if (error) throw error;
+            const storeByCart = Object.fromEntries(customerState.carts.map(cart => [cart.id, cart.store_id]));
+            customerState.cart = (data || []).map(row => mapCartItem(row, storeByCart[row.cart_id]));
+        }
+        writeArray(CART_KEY, customerState.cart);
+        updateCartUI(customerState.cart);
+        return true;
+    }
+
+    async function loadCustomerLists() {
+        if (!customerState.user) return false;
+        const [wishResult, compareResult] = await Promise.all([
+            supabaseClient.from('wishlist_items').select('product_id').eq('user_id', customerState.user.id),
+            supabaseClient.from('compare_items').select('product_id').eq('user_id', customerState.user.id)
+        ]);
+        if (wishResult.error) throw wishResult.error;
+        if (compareResult.error) throw compareResult.error;
+        wishlist = (wishResult.data || []).map(row => Number(row.product_id));
+        compareList = (compareResult.data || []).map(row => Number(row.product_id));
+        writeArray('favlor_wishlist', wishlist);
+        writeArray('favlor_compare', compareList);
+        applyFilters();
+        return true;
+    }
+
+    function mapCustomerOrder(row, payment) {
+        return {
+            _supabaseId: row.id,
+            id: row.order_number || row.id,
+            customer: {
+                name: row.customer_name || 'Customer',
+                email: row.customer_email || '',
+                phone: row.customer_phone || '',
+                address: row.shipping_address || '',
+                notes: row.notes || ''
+            },
+            items: (row.order_items || []).map(item => ({
+                id: Number(item.product_id || 0),
+                name: item.product_name || 'Product',
+                sku: item.sku || '',
+                price: Number(item.unit_price || 0),
+                quantity: Number(item.quantity || 1),
+                image: item.image_url || PRODUCT_IMAGE_PLACEHOLDER
+            })),
+            subtotal: Number(row.subtotal || 0),
+            discount: Number(row.discount_amount || 0),
+            tax: Number(row.tax_amount || 0),
+            shipping: Number(row.shipping_amount || 0),
+            total: Number(row.total || 0),
+            status: row.status || 'Pending',
+            paymentMethod: payment?.payment_method || row.payment_method || 'Cash on Delivery',
+            paymentStatus: payment?.status || row.payment_status || 'Pending',
+            paymentId: payment?.payment_number || '',
+            transactionId: payment?.transaction_id || row.transaction_id || '',
+            date: row.created_at,
+            deliveryDate: row.delivery_date
+        };
+    }
+
+    async function loadCustomerOrders() {
+        if (!customerState.user || !customerState.customer) return false;
+        const [orderResult, paymentResult] = await Promise.all([
+            supabaseClient.from('orders').select('*,order_items(*)')
+                .eq('auth_user_id', customerState.user.id).order('created_at', { ascending: false }),
+            supabaseClient.from('payments').select('*')
+                .eq('customer_id', customerState.customer.id).order('payment_date', { ascending: false })
+        ]);
+        if (orderResult.error) throw orderResult.error;
+        if (paymentResult.error) throw paymentResult.error;
+        customerState.payments = paymentResult.data || [];
+        const paymentByOrder = Object.fromEntries(customerState.payments.map(payment => [payment.order_id, payment]));
+        customerState.orders = (orderResult.data || []).map(row => mapCustomerOrder(row, paymentByOrder[row.id]));
+        writeArray(ORDERS_KEY, customerState.orders);
+        writeArray('favlor_customer_payments', customerState.payments);
+        if (currentView === 'orders') renderOrders();
+        updateOrderBadge();
+        return true;
+    }
+
+    async function ensureActiveCart(product) {
+        const context = await requireCustomerLogin();
+        if (!context) return null;
+        const fullProduct = productsCache.find(item => Number(item.id) === Number(product.id)) || product;
+        const storeId = fullProduct.storeId;
+        if (!storeId) throw new Error('Product store could not be resolved.');
+        let cart = customerState.carts.find(item => item.store_id === storeId);
+        if (cart) return cart;
+        const existingResult = await supabaseClient.from('carts').select('id,store_id,status')
+            .eq('user_id', context.user.id).eq('store_id', storeId).eq('status', 'active').maybeSingle();
+        if (existingResult.error) throw existingResult.error;
+        cart = existingResult.data;
+        if (!cart) {
+            const createResult = await supabaseClient.from('carts')
+                .insert({ user_id: context.user.id, store_id: storeId, status: 'active' })
+                .select('id,store_id,status').single();
+            if (createResult.error) throw createResult.error;
+            cart = createResult.data;
+        }
+        if (!customerState.carts.some(item => item.id === cart.id)) customerState.carts.push(cart);
+        return cart;
+    }
+
+    async function setDatabaseCartQuantity(product, quantity, additive = false) {
+        const cart = await ensureActiveCart(product);
+        if (!cart) return false;
+        const existingResult = await supabaseClient.from('cart_items')
+            .select('id,quantity').eq('cart_id', cart.id).eq('product_id', Number(product.id)).maybeSingle();
+        if (existingResult.error) throw existingResult.error;
+        const nextQuantity = additive
+            ? Number(existingResult.data?.quantity || 0) + Number(quantity)
+            : Number(quantity);
+        if (nextQuantity <= 0) {
+            if (existingResult.data?.id) {
+                const result = await supabaseClient.from('cart_items').delete().eq('id', existingResult.data.id);
+                if (result.error) throw result.error;
+            }
+            return true;
+        }
+        const stock = Number(product.stock ?? product.stockQty ?? 999);
+        if (stock >= 0 && nextQuantity > stock) throw new Error(`Only ${stock} item(s) are available.`);
+        const payload = { cart_id: cart.id, product_id: Number(product.id), quantity: Math.min(999, nextQuantity) };
+        const result = existingResult.data?.id
+            ? await supabaseClient.from('cart_items').update({ quantity: payload.quantity }).eq('id', existingResult.data.id)
+            : await supabaseClient.from('cart_items').insert(payload);
+        if (result.error) throw result.error;
+        return true;
+    }
+
+    function guestCart() { return readArray(GUEST_CART_KEY); }
+    function saveGuestCart(items) {
+        writeArray(GUEST_CART_KEY, items);
+        writeArray(CART_KEY, items);
+        updateCartUI(items);
+    }
+
+    window.getCartItems = function () { return customerState.user ? customerState.cart : guestCart(); };
+    window.saveCartItems = function (items) {
+        if (customerState.user) {
+            customerState.cart = Array.isArray(items) ? items : [];
+            writeArray(CART_KEY, customerState.cart);
+            updateCartUI(customerState.cart);
+        } else saveGuestCart(Array.isArray(items) ? items : []);
+    };
+    window.getOrders = () => customerState.user ? customerState.orders : [];
+    window.saveOrders = orders => {
+        customerState.orders = Array.isArray(orders) ? orders : [];
+        writeArray(ORDERS_KEY, customerState.orders);
+        if (currentView === 'orders') renderOrders();
+        updateOrderBadge();
+    };
+
+    window.addItemToCart = async function (product) {
+        if (productAvailability(product) === 'out_of_stock') {
+            showToast('This product is out of stock.', 'warning'); return;
+        }
+        try {
+            const { data: sessionData } = await supabaseClient.auth.getSession();
+            if (!sessionData.session?.user) {
+                const items = guestCart();
+                const existing = items.find(item => Number(item.id) === Number(product.id));
+                if (existing) existing.quantity += 1;
+                else items.push({ id: Number(product.id), storeId: product.storeId, name: product.name,
+                    price: Number(product.price || 0), image: product.image || PRODUCT_IMAGE_PLACEHOLDER,
+                    stock: Number(product.stock ?? product.stockQty ?? 999), quantity: 1 });
+                saveGuestCart(items);
+                showToast(`"${product.name}" added to cart. Login before checkout.`, 'success');
+                return;
+            }
+            if (!customerState.user) await loadCustomerContext();
+            await setDatabaseCartQuantity(product, 1, true);
+            await loadCustomerCart();
+            showToast(`"${product.name}" added to Supabase cart.`, 'success');
+        } catch (error) {
+            console.error('Supabase cart add error:', error);
+            showToast(error.message || 'Unable to add product to cart.', 'error');
+        }
+    };
+
+    window.removeItemFromCart = async function (id) {
+        const item = getCartItems().find(row => Number(row.id) === Number(id)); if (!item) return;
+        if (!customerState.user) {
+            const items = guestCart(); const index = items.findIndex(row => Number(row.id) === Number(id));
+            if (items[index].quantity > 1) items[index].quantity -= 1; else items.splice(index, 1);
+            saveGuestCart(items); renderCartModal(items); return;
+        }
+        try { await setDatabaseCartQuantity(item, item.quantity - 1); await loadCustomerCart(); }
+        catch (error) { showToast(error.message || 'Unable to update cart.', 'error'); }
+    };
+
+    window.deleteItemFromCart = async function (id) {
+        const item = getCartItems().find(row => Number(row.id) === Number(id)); if (!item) return;
+        if (!customerState.user) {
+            const items = guestCart().filter(row => Number(row.id) !== Number(id));
+            saveGuestCart(items); renderCartModal(items); return;
+        }
+        try { await setDatabaseCartQuantity(item, 0); await loadCustomerCart(); }
+        catch (error) { showToast(error.message || 'Unable to remove cart item.', 'error'); }
+    };
+
+    window.addOneMore = async function (id) {
+        const product = productsCache.find(row => Number(row.id) === Number(id));
+        if (product) await addItemToCart(product);
+    };
+
+    window.toggleWishlist = async function (id) {
+        const context = await requireCustomerLogin(); if (!context) return;
+        const exists = wishlist.includes(Number(id));
+        const result = exists
+            ? await supabaseClient.from('wishlist_items').delete().eq('user_id', context.user.id).eq('product_id', Number(id))
+            : await supabaseClient.from('wishlist_items').insert({ user_id: context.user.id, product_id: Number(id) });
+        if (result.error) return showToast(result.error.message || 'Wishlist update failed.', 'error');
+        await loadCustomerLists();
+        showToast(exists ? 'Removed from Wishlist' : 'Added to Wishlist', 'success');
+    };
+
+    window.toggleCompare = async function (id) {
+        const context = await requireCustomerLogin(); if (!context) return;
+        const exists = compareList.includes(Number(id));
+        if (!exists && compareList.length >= 4) return showToast('Max 4 products to compare.', 'warning');
+        const result = exists
+            ? await supabaseClient.from('compare_items').delete().eq('user_id', context.user.id).eq('product_id', Number(id))
+            : await supabaseClient.from('compare_items').insert({ user_id: context.user.id, product_id: Number(id) });
+        if (result.error) return showToast(result.error.message || 'Compare update failed.', 'error');
+        await loadCustomerLists();
+        showToast(exists ? 'Removed from Compare' : 'Added to Compare', 'success');
+    };
+
+    window.placeOrder = async function (event) {
+        event.preventDefault();
+        const context = await requireCustomerLogin(); if (!context) return;
+        const name = document.getElementById('custName').value.trim();
+        const email = document.getElementById('custEmail').value.trim().toLowerCase();
+        const phone = document.getElementById('custPhone').value.trim();
+        const address = document.getElementById('custAddress').value.trim();
+        const notes = document.getElementById('custNotes').value.trim();
+        const paymentMethod = document.getElementById('custPaymentMethod').value;
+        const items = customerState.cart;
+        if (!name || !email || !phone || !address || !items.length) return showToast('Fill all required fields.', 'warning');
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast('Invalid email.', 'warning');
+        if (!/^[0-9]{10}$/.test(phone.replace(/[^0-9]/g, ''))) return showToast('Invalid phone.', 'warning');
+        const button = document.getElementById('placeOrderBtn');
+        button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
+        try {
+            const { data, error } = await supabaseClient.rpc('place_customer_order', {
+                p_customer_name: name,
+                p_customer_email: email,
+                p_customer_phone: phone,
+                p_shipping_address: address,
+                p_notes: notes || '',
+                p_payment_method: paymentMethod,
+                p_items: items.map(item => ({ product_id: Number(item.id), quantity: Number(item.quantity) }))
+            });
+            if (error) throw error;
+            await Promise.all([
+                loadCustomerCart(), loadCustomerOrders(),
+                loadProductsFromSupabase({ showErrorToast: false })
+            ]);
+            closeCheckoutForm();
+            document.getElementById('checkoutForm').reset();
+            updateUserUI();
+            switchView('orders'); renderOrders();
+            const numbers = (data || []).map(row => row.order_number).filter(Boolean).join(', ');
+            showToast(`Order placed successfully${numbers ? ': ' + numbers : ''}.`, 'success');
+        } catch (error) {
+            console.error('Supabase checkout error:', error);
+            showToast(error.message || 'Unable to place order.', 'error');
+        } finally {
+            button.disabled = false; button.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+        }
+    };
+
+    async function loadProductReviews(productId) {
+        const loginText = document.getElementById('customerReviewLogin');
+        const form = document.getElementById('customerReviewForm');
+        const list = document.getElementById('customerReviewList');
+        loginText.textContent = customerState.user ? 'Your review will be visible after Admin approval.' : 'Login to submit a review.';
+        form.style.display = customerState.user ? 'grid' : 'none';
+        list.innerHTML = '<small>Loading reviews...</small>';
+        const { data, error } = await supabaseClient.from('product_reviews')
+            .select('id,customer_id,rating,title,review,status,created_at,customers(full_name)')
+            .eq('product_id', Number(productId)).order('created_at', { ascending: false });
+        if (error) { list.innerHTML = '<small>Reviews could not be loaded.</small>'; return; }
+        list.innerHTML = (data || []).length ? (data || []).map(row => {
+            const customer = Array.isArray(row.customers) ? row.customers[0] : row.customers;
+            const status = row.status === 'Pending' ? ' · Pending approval' : '';
+            return `<div class="customer-review-item"><strong>${'★'.repeat(Number(row.rating || 0))}${'☆'.repeat(5 - Number(row.rating || 0))} ${escapeHtml(row.title || '')}</strong><div>${escapeHtml(row.review || '')}</div><small>${escapeHtml(customer?.full_name || 'Customer')}${status}</small></div>`;
+        }).join('') : '<small>No reviews yet.</small>';
+    }
+
+    window.submitCustomerReview = async function (event) {
+        event.preventDefault();
+        const context = await requireCustomerLogin(); if (!context || !currentProduct) return;
+        const rating = Number(document.getElementById('customerReviewRating').value);
+        const title = document.getElementById('customerReviewTitle').value.trim();
+        const review = document.getElementById('customerReviewText').value.trim();
+        if (!rating) return showToast('Select a rating.', 'warning');
+        const existing = await supabaseClient.from('product_reviews').select('id,status')
+            .eq('product_id', Number(currentProduct.id)).eq('customer_id', context.customer.id).maybeSingle();
+        if (existing.error) return showToast(existing.error.message, 'error');
+        if (existing.data?.status === 'Approved') return showToast('Approved review cannot be changed.', 'warning');
+        const payload = { product_id: Number(currentProduct.id), customer_id: context.customer.id,
+            rating, title: title || null, review: review || null, status: 'Pending' };
+        const result = existing.data?.id
+            ? await supabaseClient.from('product_reviews').update(payload).eq('id', existing.data.id)
+            : await supabaseClient.from('product_reviews').insert(payload);
+        if (result.error) return showToast(result.error.message || 'Review submission failed.', 'error');
+        document.getElementById('customerReviewForm').reset();
+        await loadProductReviews(currentProduct.id);
+        showToast('Review submitted for Admin approval.', 'success');
+    };
+
+    const originalOpenProductModal = window.openModal;
+    window.openModal = function (product) {
+        originalOpenProductModal(product);
+        loadProductReviews(product.id);
+    };
+
+    window.sendForgotOTP = async function () {
+        const email = document.getElementById('forgotEmail').value.trim().toLowerCase();
+        document.getElementById('forgotEmailError').textContent = '';
+        document.getElementById('forgotError').textContent = '';
+        if (!email || !email.includes('@')) {
+            document.getElementById('forgotEmailError').textContent = 'Enter a valid email address.'; return;
+        }
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+        if (error) { document.getElementById('forgotError').textContent = error.message; return; }
+        closeForgotPasswordModal();
+        showToast('Password reset link sent to your email.', 'success');
+    };
+
+    window.verifyForgotOTP = function () {
+        document.getElementById('forgotOtpError').textContent = 'Use the secure reset link sent to your email.';
+    };
+    window.resendForgotOTP = window.sendForgotOTP;
+
+    window.handleResetPassword = async function (event) {
+        event.preventDefault();
+        const password = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmNewPassword').value;
+        document.getElementById('resetError').textContent = '';
+        if (password.length < 6) return document.getElementById('newPasswordError').textContent = 'Minimum 6 characters required.';
+        if (password !== confirmPassword) return document.getElementById('confirmNewPasswordError').textContent = 'Passwords do not match.';
+        const { error } = await supabaseClient.auth.updateUser({ password });
+        if (error) { document.getElementById('resetError').textContent = error.message; return; }
+        document.getElementById('resetPasswordModal').classList.remove('active');
+        document.getElementById('resetPasswordForm').reset();
+        showToast('Password updated successfully.', 'success');
+    };
+
+    async function mergeGuestCart() {
+        const items = guestCart();
+        if (!customerState.user || !items.length) return;
+        for (const item of items) {
+            const product = productsCache.find(row => Number(row.id) === Number(item.id));
+            if (product) await setDatabaseCartQuantity(product, Number(item.quantity || 1), true);
+        }
+        localStorage.removeItem(GUEST_CART_KEY);
+    }
+
+    async function loadAllCustomerData() {
+        try {
+            const context = await loadCustomerContext();
+            if (!context) {
+                customerState.cart = [];
+                customerState.orders = [];
+                wishlist = [];
+                compareList = [];
+                writeArray(ORDERS_KEY, []);
+                writeArray('favlor_wishlist', []);
+                writeArray('favlor_compare', []);
+                const legacy = readArray(CART_KEY);
+                if (!localStorage.getItem(GUEST_CART_KEY) && legacy.length) writeArray(GUEST_CART_KEY, legacy);
+                updateCartUI(guestCart());
+                updateOrderBadge();
+                applyFilters();
+                return false;
+            }
+            await mergeGuestCart();
+            await Promise.all([loadCustomerCart(), loadCustomerLists(), loadCustomerOrders()]);
+            subscribeCustomerRealtime();
+            return true;
+        } catch (error) {
+            console.error('Customer full database load error:', error);
+            showToast(error.message || 'Customer data could not be loaded.', 'error');
+            return false;
+        }
+    }
+    window.favlorLoadCustomerData = loadAllCustomerData;
+
+    function scheduleCustomerReload() {
+        clearTimeout(customerReloadTimer);
+        customerReloadTimer = setTimeout(() => loadAllCustomerData(), 300);
+    }
+
+    function subscribeCustomerRealtime() {
+        if (customerRealtimeChannel || !customerState.user) return;
+        customerRealtimeChannel = supabaseClient.channel('customer-full-data-sync');
+        ['carts', 'cart_items', 'wishlist_items', 'compare_items', 'orders', 'order_items', 'payments', 'product_reviews']
+            .forEach(table => customerRealtimeChannel.on('postgres_changes', {
+                event: '*', schema: 'public', table
+            }, scheduleCustomerReload));
+        customerRealtimeChannel.subscribe();
+    }
+
+    supabaseClient.auth.onAuthStateChange((event) => {
+        if (event === 'PASSWORD_RECOVERY') {
+            document.getElementById('forgotOtpModal').classList.remove('active');
+            document.getElementById('resetPasswordModal').classList.add('active');
+        }
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+            window.setTimeout(async () => {
+                if (event === 'SIGNED_OUT') {
+                    if (customerRealtimeChannel) await supabaseClient.removeChannel(customerRealtimeChannel);
+                    customerRealtimeChannel = null;
+                    customerState.user = null; customerState.customer = null;
+                    customerState.cart = []; customerState.orders = [];
+                    writeArray(CART_KEY, []); writeArray(ORDERS_KEY, []);
+                }
+                await loadAllCustomerData();
+            }, 0);
+        }
+    });
+
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', loadAllCustomerData);
+    else loadAllCustomerData();
+    window.addEventListener('focus', loadAllCustomerData);
+})();
+</script>
 </body>
 </html>
