@@ -3326,12 +3326,41 @@
             .product-card-h { width: 200px; min-width: 180px; }
         }
         @media (max-width: 480px) {
+            .customer-header {
+                padding: 10px 12px;
+                gap: 10px;
+            }
+            .customer-header .brand {
+                font-size: 21px;
+            }
+            .header-actions {
+                justify-content: space-between;
+                gap: 6px;
+            }
+            .header-actions .header-search-btn {
+                margin-left: 0;
+            }
+            .container {
+                width: auto;
+                margin: 16px 12px;
+            }
+            .horizontal-scroll-wrapper {
+                width: 100%;
+                overflow-x: hidden;
+                padding: 8px 0 16px;
+            }
             .product-horizontal {
+                display: grid !important;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                width: 100%;
+                min-width: 0 !important;
+                gap: 12px;
+                padding: 4px 0;
                 align-items: stretch !important;
             }
             .product-card-h {
-                width: 160px;
-                min-width: 140px;
+                width: 100%;
+                min-width: 0;
                 display: flex !important;
                 flex-direction: column !important;
                 align-self: stretch !important;
@@ -3340,6 +3369,14 @@
                 display: flex !important;
                 flex: 1 1 auto !important;
                 flex-direction: column !important;
+                padding: 12px 10px 12px;
+            }
+            .product-card-h .product-price-row { gap: 6px; }
+            .product-card-h .product-price { font-size: 18px; }
+            .product-card-h .product-original-price { font-size: 12px; }
+            .product-card-h .product-discount-percent {
+                padding: 1px 7px;
+                font-size: 11px;
             }
             .product-card-h .card-actions-bottom {
                 display: grid !important;
