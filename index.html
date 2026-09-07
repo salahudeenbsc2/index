@@ -6507,11 +6507,58 @@
     let pendingCancellation = null;
     let pendingServiceRequest = null;
     let cartMutationQueue = Promise.resolve();
+    let pendingCartMutationCount = 0;
+    let cartUiRevision = 0;
+    const cartSyncTimers = new Map();
+    const cartSyncVersions = new Map();
+
+    function hasPendingCartMutation() {
+        return pendingCartMutationCount > 0 || cartSyncTimers.size > 0;
+    }
 
     function enqueueCartMutation(task) {
-        const operation = cartMutationQueue.then(task, task);
-        cartMutationQueue = operation.catch(() => {});
-        return operation;
+        pendingCartMutationCount += 1;
+        const runTask = async () => task();
+        const operation = cartMutationQueue.then(runTask, runTask);
+        const finalized = operation.finally(() => {
+            pendingCartMutationCount = Math.max(0, pendingCartMutationCount - 1);
+        });
+        cartMutationQueue = finalized.catch(() => {});
+        return finalized;
+    }
+
+    function scheduleCartQuantitySync(product, quantity) {
+        const itemId = Number(product.id);
+        const nextVersion = Number(cartSyncVersions.get(itemId) || 0) + 1;
+        cartSyncVersions.set(itemId, nextVersion);
+        cartUiRevision += 1;
+        if (cartSyncTimers.has(itemId)) clearTimeout(cartSyncTimers.get(itemId));
+
+        const timer = setTimeout(() => {
+            cartSyncTimers.delete(itemId);
+            enqueueCartMutation(async () => {
+                try {
+                    // A newer click already exists for this product. Do not send
+                    // this older queued quantity to Supabase.
+                    if (cartSyncVersions.get(itemId) !== nextVersion) return true;
+                    if (!customerState.user) await loadCustomerContext();
+                    if (!customerState.user) throw new Error('Your session expired. Please login again.');
+                    if (cartSyncVersions.get(itemId) !== nextVersion) return true;
+                    await setDatabaseCartQuantity(product, quantity, false);
+                    if (cartSyncVersions.get(itemId) === nextVersion) scheduleCustomerReload();
+                    return true;
+                } catch (error) {
+                    console.error('Supabase cart sync error:', error);
+                    if (cartSyncVersions.get(itemId) === nextVersion && customerState.user) {
+                        scheduleCustomerReload();
+                        showToast(error.message || 'Unable to sync cart quantity.', 'error');
+                    }
+                    return false;
+                }
+            });
+        }, 220);
+        cartSyncTimers.set(itemId, timer);
+        return true;
     }
 
     const readArray = key => {
@@ -6577,23 +6624,34 @@
 
     async function loadCustomerCart() {
         if (!customerState.user) return false;
+        // A request that starts before/during a quantity click must never replace
+        // the newer quantity already visible in the cart.
+        const requestRevision = cartUiRevision;
+        const pendingAtStart = hasPendingCartMutation();
         const { data: carts, error: cartError } = await supabaseClient
             .from('carts').select('id,store_id,status')
             .eq('user_id', customerState.user.id).eq('status', 'active');
         if (cartError) throw cartError;
-        customerState.carts = carts || [];
-        if (!customerState.carts.length) {
-            customerState.cart = [];
+        const serverCarts = carts || [];
+        let serverCart = [];
+        if (!serverCarts.length) {
+            serverCart = [];
         } else {
-            const cartIds = customerState.carts.map(cart => cart.id);
+            const cartIds = serverCarts.map(cart => cart.id);
             const { data, error } = await supabaseClient
                 .from('cart_items')
                 .select('id,cart_id,product_id,quantity,products(id,store_id,name,price,images,availability,status,stock_quantity)')
                 .in('cart_id', cartIds).order('created_at', { ascending: true });
             if (error) throw error;
-            const storeByCart = Object.fromEntries(customerState.carts.map(cart => [cart.id, cart.store_id]));
-            customerState.cart = (data || []).map(row => mapCartItem(row, storeByCart[row.cart_id]));
+            const storeByCart = Object.fromEntries(serverCarts.map(cart => [cart.id, cart.store_id]));
+            serverCart = (data || []).map(row => mapCartItem(row, storeByCart[row.cart_id]));
         }
+        if (requestRevision !== cartUiRevision || pendingAtStart || hasPendingCartMutation()) {
+            scheduleCustomerReload();
+            return false;
+        }
+        customerState.carts = serverCarts;
+        customerState.cart = serverCart;
         writeArray(CART_KEY, customerState.cart);
         updateCartUI(customerState.cart);
         return true;
@@ -7023,18 +7081,8 @@
 
         saveCartItems(items);
         showToast(`${requestedQuantity} × "${product.name}" added to cart.`, 'success');
-        return enqueueCartMutation(async () => {
-            try {
-                if (!customerState.user) await loadCustomerContext();
-                await setDatabaseCartQuantity(product, requestedQuantity, true);
-                return true;
-            } catch (error) {
-                console.error('Supabase cart add error:', error);
-                if (customerState.user) await loadCustomerCart().catch(() => {});
-                showToast(error.message || 'Unable to sync product with cart.', 'error');
-                return false;
-            }
-        });
+        scheduleCartQuantitySync(product, nextQuantity);
+        return true;
     };
 
     async function changeCartItemQuantity(id, change) {
@@ -7060,17 +7108,8 @@
 
         items[index].quantity = nextQuantity;
         saveCartItems(items);
-        return enqueueCartMutation(async () => {
-            try {
-                await setDatabaseCartQuantity(item, nextQuantity, false);
-                return true;
-            } catch (error) {
-                console.error('Supabase cart quantity error:', error);
-                await loadCustomerCart().catch(() => {});
-                showToast(error.message || 'Unable to sync cart quantity.', 'error');
-                return false;
-            }
-        });
+        scheduleCartQuantitySync(item, nextQuantity);
+        return true;
     }
 
     window.removeItemFromCart = function (id) {
@@ -7086,17 +7125,8 @@
             return true;
         }
         saveCartItems(items);
-        return enqueueCartMutation(async () => {
-            try {
-                await setDatabaseCartQuantity(item, 0);
-                return true;
-            } catch (error) {
-                console.error('Supabase cart delete error:', error);
-                await loadCustomerCart().catch(() => {});
-                showToast(error.message || 'Unable to remove cart item.', 'error');
-                return false;
-            }
-        });
+        scheduleCartQuantitySync(item, 0);
+        return true;
     };
 
     window.addOneMore = function (id) {
@@ -7377,7 +7407,13 @@
 
     function scheduleCustomerReload() {
         clearTimeout(customerReloadTimer);
-        customerReloadTimer = setTimeout(() => loadAllCustomerData(), 300);
+        customerReloadTimer = setTimeout(() => {
+            if (hasPendingCartMutation()) {
+                scheduleCustomerReload();
+                return;
+            }
+            loadAllCustomerData();
+        }, 350);
     }
 
     function subscribeCustomerRealtime() {
@@ -7397,6 +7433,10 @@
         if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
             window.setTimeout(async () => {
                 if (event === 'SIGNED_OUT') {
+                    cartSyncTimers.forEach(timer => clearTimeout(timer));
+                    cartSyncTimers.clear();
+                    cartSyncVersions.clear();
+                    cartUiRevision += 1;
                     if (customerRealtimeChannel) await supabaseClient.removeChannel(customerRealtimeChannel);
                     customerRealtimeChannel = null;
                     customerState.user = null; customerState.customer = null;
@@ -7424,7 +7464,10 @@
         loadAllCustomerData();
         restorePasswordRecoveryFromUrl();
     }
-    window.addEventListener('focus', loadAllCustomerData);
+    window.addEventListener('focus', () => {
+        if (hasPendingCartMutation()) scheduleCustomerReload();
+        else loadAllCustomerData();
+    });
 })();
 </script>
 </body>
