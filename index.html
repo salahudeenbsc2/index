@@ -3421,6 +3421,15 @@
             #productModal .modal-image-nav {
                 display: none !important;
             }
+            .cart-modal-overlay {
+                backdrop-filter: none;
+                animation: none;
+            }
+            .cart-modal-box,
+            .cart-item {
+                animation: none;
+                transition: none;
+            }
             .customer-header { padding: 12px 16px; flex-direction: column; align-items: stretch; }
             .customer-header .brand { text-align: center; }
             .header-actions {
@@ -4534,16 +4543,20 @@
             const totalAmount = items.reduce((sum, item) =>
                 sum + ((Number(item.price) || 0) * (Number(item.quantity) || 0)), 0);
             if (countEl) {
+                const changed = countEl.textContent !== String(total);
                 countEl.textContent = total;
-                countEl.classList.remove('bump');
-                void countEl.offsetWidth;
-                countEl.classList.add('bump');
+                if (changed) {
+                    countEl.classList.remove('bump');
+                    requestAnimationFrame(() => countEl.classList.add('bump'));
+                }
             }
             if (headerCountEl) {
+                const changed = headerCountEl.textContent !== String(total);
                 headerCountEl.textContent = total;
-                headerCountEl.classList.remove('bump');
-                void headerCountEl.offsetWidth;
-                headerCountEl.classList.add('bump');
+                if (changed) {
+                    headerCountEl.classList.remove('bump');
+                    requestAnimationFrame(() => headerCountEl.classList.add('bump'));
+                }
             }
             if (headerTotalEl) headerTotalEl.textContent = `Rs. ${totalAmount.toFixed(2)}`;
             if (document.getElementById('cartModal').classList.contains('active')) renderCartModal(items);
@@ -6493,6 +6506,13 @@
     let customerReloadTimer = null;
     let pendingCancellation = null;
     let pendingServiceRequest = null;
+    let cartMutationQueue = Promise.resolve();
+
+    function enqueueCartMutation(task) {
+        const operation = cartMutationQueue.then(task, task);
+        cartMutationQueue = operation.catch(() => {});
+        return operation;
+    }
 
     const readArray = key => {
         try {
@@ -6900,7 +6920,9 @@
     });
 
     async function ensureActiveCart(product) {
-        const context = await requireCustomerLogin();
+        const context = customerState.user && customerState.customer
+            ? { user: customerState.user, customer: customerState.customer }
+            : await requireCustomerLogin();
         if (!context) return null;
         const fullProduct = productsCache.find(item => Number(item.id) === Number(product.id)) || product;
         const storeId = fullProduct.storeId;
@@ -6955,9 +6977,13 @@
         updateCartUI(items);
     }
 
-    window.getCartItems = function () { return customerState.user ? customerState.cart : guestCart(); };
+    window.getCartItems = function () {
+        if (customerState.user) return customerState.cart;
+        if (isLoggedIn()) return readArray(CART_KEY);
+        return guestCart();
+    };
     window.saveCartItems = function (items) {
-        if (customerState.user) {
+        if (customerState.user || isLoggedIn()) {
             customerState.cart = Array.isArray(items) ? items : [];
             writeArray(CART_KEY, customerState.cart);
             updateCartUI(customerState.cart);
@@ -6976,40 +7002,43 @@
             showToast('This product is out of stock.', 'warning'); return false;
         }
         const requestedQuantity = Math.max(1, Math.floor(Number(quantity) || 1));
-        try {
-            const { data: sessionData } = await supabaseClient.auth.getSession();
-            if (!sessionData.session?.user) {
-                const items = guestCart();
-                const existing = items.find(item => Number(item.id) === Number(product.id));
-                const stockLimit = getProductStockLimit(product);
-                const nextQuantity = Number(existing?.quantity || 0) + requestedQuantity;
-                if (stockLimit < 999 && nextQuantity > stockLimit) {
-                    showToast(`Only ${stockLimit} item(s) are available.`, 'warning');
-                    return false;
-                }
-                if (existing) existing.quantity = nextQuantity;
-                else items.push({ id: Number(product.id), storeId: product.storeId, name: product.name,
-                    price: Number(product.price || 0), image: product.image || PRODUCT_IMAGE_PLACEHOLDER,
-                    stock: stockLimit, quantity: requestedQuantity });
-                saveGuestCart(items);
-                showToast(`${requestedQuantity} × "${product.name}" added to cart. Login before checkout.`, 'success');
-                return true;
-            }
-            if (!customerState.user) await loadCustomerContext();
-            await setDatabaseCartQuantity(product, requestedQuantity, true);
-            await loadCustomerCart();
-            showToast(`${requestedQuantity} × "${product.name}" added to cart.`, 'success');
-            return true;
-        } catch (error) {
-            console.error('Supabase cart add error:', error);
-            showToast(error.message || 'Unable to add product to cart.', 'error');
+        const stockLimit = getProductStockLimit(product);
+        const items = (isLoggedIn() ? getCartItems() : guestCart()).map(item => ({ ...item }));
+        const existing = items.find(item => Number(item.id) === Number(product.id));
+        const nextQuantity = Number(existing?.quantity || 0) + requestedQuantity;
+        if (stockLimit < 999 && nextQuantity > stockLimit) {
+            showToast(`Only ${stockLimit} item(s) are available.`, 'warning');
             return false;
         }
+        if (existing) existing.quantity = nextQuantity;
+        else items.push({ id: Number(product.id), storeId: product.storeId, name: product.name,
+            price: Number(product.price || 0), image: product.image || PRODUCT_IMAGE_PLACEHOLDER,
+            stock: stockLimit, quantity: requestedQuantity });
+
+        if (!isLoggedIn()) {
+            saveGuestCart(items);
+            showToast(`${requestedQuantity} × "${product.name}" added to cart. Login before checkout.`, 'success');
+            return true;
+        }
+
+        saveCartItems(items);
+        showToast(`${requestedQuantity} × "${product.name}" added to cart.`, 'success');
+        return enqueueCartMutation(async () => {
+            try {
+                if (!customerState.user) await loadCustomerContext();
+                await setDatabaseCartQuantity(product, requestedQuantity, true);
+                return true;
+            } catch (error) {
+                console.error('Supabase cart add error:', error);
+                if (customerState.user) await loadCustomerCart().catch(() => {});
+                showToast(error.message || 'Unable to sync product with cart.', 'error');
+                return false;
+            }
+        });
     };
 
     async function changeCartItemQuantity(id, change) {
         const itemId = Number(id);
-        if (cartQuantityUpdates.has(itemId)) return false;
         const items = getCartItems();
         const index = items.findIndex(row => Number(row.id) === itemId);
         if (index < 0) return false;
@@ -7023,30 +7052,25 @@
             return false;
         }
 
-        if (!customerState.user) {
+        if (!isLoggedIn()) {
             items[index].quantity = nextQuantity;
             saveGuestCart(items);
-            renderCartModal(items);
             return true;
         }
 
-        cartQuantityUpdates.add(itemId);
         items[index].quantity = nextQuantity;
         saveCartItems(items);
-        renderCartModal(items);
-        try {
-            await setDatabaseCartQuantity(item, nextQuantity, false);
-            await loadCustomerCart();
-            return true;
-        } catch (error) {
-            items[index].quantity = previousQuantity;
-            saveCartItems(items);
-            showToast(error.message || 'Unable to update cart quantity.', 'error');
-            return false;
-        } finally {
-            cartQuantityUpdates.delete(itemId);
-            renderCartModal(getCartItems());
-        }
+        return enqueueCartMutation(async () => {
+            try {
+                await setDatabaseCartQuantity(item, nextQuantity, false);
+                return true;
+            } catch (error) {
+                console.error('Supabase cart quantity error:', error);
+                await loadCustomerCart().catch(() => {});
+                showToast(error.message || 'Unable to sync cart quantity.', 'error');
+                return false;
+            }
+        });
     }
 
     window.removeItemFromCart = function (id) {
@@ -7054,14 +7078,25 @@
     };
 
     window.deleteItemFromCart = async function (id) {
-        if (cartQuantityUpdates.has(Number(id))) return;
-        const item = getCartItems().find(row => Number(row.id) === Number(id)); if (!item) return;
-        if (!customerState.user) {
-            const items = guestCart().filter(row => Number(row.id) !== Number(id));
-            saveGuestCart(items); renderCartModal(items); return;
+        const itemId = Number(id);
+        const item = getCartItems().find(row => Number(row.id) === itemId); if (!item) return;
+        const items = getCartItems().filter(row => Number(row.id) !== itemId);
+        if (!isLoggedIn()) {
+            saveGuestCart(items);
+            return true;
         }
-        try { await setDatabaseCartQuantity(item, 0); await loadCustomerCart(); }
-        catch (error) { showToast(error.message || 'Unable to remove cart item.', 'error'); }
+        saveCartItems(items);
+        return enqueueCartMutation(async () => {
+            try {
+                await setDatabaseCartQuantity(item, 0);
+                return true;
+            } catch (error) {
+                console.error('Supabase cart delete error:', error);
+                await loadCustomerCart().catch(() => {});
+                showToast(error.message || 'Unable to remove cart item.', 'error');
+                return false;
+            }
+        });
     };
 
     window.addOneMore = function (id) {
