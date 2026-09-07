@@ -3949,7 +3949,6 @@
                     <div class="dropdown-divider"></div>
                     <button class="dropdown-item active" id="shopBtn" onclick="switchView('products')"><i class="fas fa-store"></i> Products</button>
                     <button class="dropdown-item" id="ordersBtn" onclick="switchView('orders')"><i class="fas fa-truck"></i> Orders <span class="badge-dot" id="orderBadge" style="display:none;"></span></button>
-                    <button class="dropdown-item" id="customerSettingsBtn" onclick="openCustomerSettings()"><i class="fas fa-cog"></i> Settings</button>
                     <button class="dropdown-item logout" onclick="handleSupabaseCustomerLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             </div>
@@ -4206,16 +4205,6 @@
                             <input type="radio" name="custPaymentMethod" value="UPI" onchange="selectCheckoutPayment(this.value)" />
                             <span class="payment-icon"><i class="fas fa-qrcode"></i></span>
                             <span><strong>UPI</strong><small>Pay using any UPI app</small></span>
-                        </label>
-                        <label class="checkout-payment-card">
-                            <input type="radio" name="custPaymentMethod" value="Credit/Debit Card" onchange="selectCheckoutPayment(this.value)" />
-                            <span class="payment-icon"><i class="fas fa-credit-card"></i></span>
-                            <span><strong>Credit/Debit Card</strong><small>Visa, Mastercard and RuPay</small></span>
-                        </label>
-                        <label class="checkout-payment-card">
-                            <input type="radio" name="custPaymentMethod" value="Net Banking" onchange="selectCheckoutPayment(this.value)" />
-                            <span class="payment-icon"><i class="fas fa-university"></i></span>
-                            <span><strong>Net Banking</strong><small>Pay securely through your bank</small></span>
                         </label>
                     </div>
                     <div class="checkout-field-error" id="custPaymentMethodError"></div>
