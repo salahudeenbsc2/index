@@ -2531,7 +2531,7 @@
             background: #fff;
             border-radius: 24px;
             padding: 32px 36px;
-            max-width: 520px;
+            max-width: 760px;
             width: 95%;
             max-height: 90vh;
             overflow-y: auto;
@@ -2642,6 +2642,343 @@
             background: #ccc;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* ----- Complete Checkout ----- */
+        .checkout-modal-box *,
+        .checkout-modal-box *::before,
+        .checkout-modal-box *::after {
+            box-sizing: border-box;
+        }
+        .checkout-section {
+            margin-bottom: 18px;
+            padding: 17px;
+            border: 1px solid #eceff1;
+            border-radius: 16px;
+            background: #fff;
+        }
+        .checkout-section > h3 {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 0 0 15px;
+            color: #1a237e;
+            font-size: 16px;
+        }
+        .checkout-section > h3 i { color: #e8511b; }
+        .checkout-section .form-group:last-child { margin-bottom: 0; }
+        .optional-label {
+            color: #7b7b7b;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .checkout-phone-input {
+            display: flex;
+            align-items: stretch;
+            width: 100%;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #fafafa;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .checkout-phone-input:focus-within {
+            border-color: #e8511b;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(232, 81, 27, 0.1);
+        }
+        .checkout-phone-prefix {
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            border-right: 1px solid #dedede;
+            color: #333;
+            font-size: 14px;
+            font-weight: 700;
+            background: #f1f3f5;
+        }
+        .checkout-modal-box .checkout-phone-input input {
+            min-width: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+        .checkout-modal-box .checkout-phone-input input:focus {
+            border: 0;
+            box-shadow: none;
+            background: transparent;
+        }
+        .checkout-address-mode {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+            margin-bottom: 14px;
+        }
+        .checkout-address-mode button {
+            min-height: 42px;
+            padding: 9px 12px;
+            border: 1px solid #dedede;
+            border-radius: 10px;
+            background: #fff;
+            color: #555;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .checkout-address-mode button.active {
+            border-color: #e8511b;
+            color: #e8511b;
+            background: #fff5f1;
+        }
+        .checkout-address-mode button:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        .checkout-saved-address-panel {
+            margin-bottom: 14px;
+            padding: 13px;
+            border: 1px solid #ffe0d6;
+            border-radius: 12px;
+            background: #fffaf8;
+        }
+        .checkout-saved-address-panel[hidden],
+        .checkout-new-address-fields[hidden] { display: none !important; }
+        .checkout-saved-address-panel > label,
+        .checkout-field-label {
+            display: block;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .checkout-saved-address-panel select {
+            width: 100%;
+            min-height: 44px;
+            padding: 10px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #fff;
+            font: inherit;
+        }
+        .saved-address-preview {
+            margin-top: 10px;
+            color: #5f6368;
+            font-size: 13px;
+            line-height: 1.55;
+        }
+        .saved-address-preview strong {
+            color: #1a237e;
+            display: block;
+        }
+        .checkout-address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 0.8fr;
+            gap: 12px;
+        }
+        .checkout-address-type-group { margin-top: 2px; }
+        .checkout-address-types {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .checkout-address-types label {
+            display: flex !important;
+            align-items: center;
+            gap: 6px;
+            min-height: 38px;
+            margin: 0 !important;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 30px;
+            background: #fff;
+            cursor: pointer;
+        }
+        .checkout-address-types input,
+        .checkout-payment-card input,
+        .checkout-checkbox-row input {
+            accent-color: #e8511b;
+        }
+        .checkout-modal-box .checkout-address-types input {
+            width: auto;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+        }
+        .checkout-checkbox-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 9px;
+            color: #4b5563;
+            font-size: 13px;
+            line-height: 1.45;
+            cursor: pointer;
+        }
+        .checkout-checkbox-row input {
+            width: 17px !important;
+            height: 17px;
+            flex: 0 0 17px;
+            margin: 1px 0 0;
+            padding: 0 !important;
+        }
+        .checkout-payment-options {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+        .checkout-payment-card {
+            display: grid !important;
+            grid-template-columns: auto auto 1fr;
+            align-items: center;
+            gap: 9px;
+            min-height: 68px;
+            margin: 0 !important;
+            padding: 11px 12px;
+            border: 2px solid #e4e4e4;
+            border-radius: 13px;
+            background: #fff;
+            cursor: pointer;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .checkout-payment-card.selected,
+        .checkout-payment-card:has(input:checked) {
+            border-color: #e8511b;
+            background: #fff5f1;
+        }
+        .checkout-payment-card input { margin: 0; }
+        .checkout-payment-card .payment-icon {
+            display: grid;
+            place-items: center;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            color: #e8511b;
+            background: #fff;
+        }
+        .checkout-payment-card strong,
+        .checkout-payment-card small { display: block; }
+        .checkout-payment-card strong { color: #2d3748; font-size: 13px; }
+        .checkout-payment-card small { margin-top: 2px; color: #7b7b7b; font-size: 11px; font-weight: 500; }
+        .checkout-cod-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 11px 13px;
+            border-radius: 10px;
+            color: #166534;
+            background: #f0fdf4;
+            font-size: 13px;
+        }
+        .checkout-cod-message[hidden] { display: none; }
+        .checkout-coupon-section { background: #fafafa; }
+        .checkout-coupon-row { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+        .checkout-coupon-row input {
+            min-width: 0;
+            text-transform: uppercase;
+        }
+        .checkout-coupon-row button {
+            min-width: 88px;
+            padding: 10px 16px;
+            border: 0;
+            border-radius: 10px;
+            background: #1a237e;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .checkout-coupon-row button:disabled { cursor: wait; opacity: 0.65; }
+        .checkout-coupon-message {
+            min-height: 0;
+            margin-top: 7px;
+            color: #5f6368;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .checkout-coupon-message.success { color: #15803d; }
+        .checkout-coupon-message.error { color: #c62828; }
+        .checkout-summary.checkout-summary-detailed {
+            display: block;
+            padding: 16px 18px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .checkout-summary-detailed h3 {
+            margin: 0 0 10px;
+            color: #1a237e;
+            font-size: 16px;
+        }
+        .checkout-summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 7px 0;
+            color: #4b5563;
+        }
+        .checkout-summary-row.discount-row { color: #15803d; }
+        .checkout-summary-row.checkout-grand-total {
+            margin-top: 7px;
+            padding-top: 12px;
+            border-top: 1px solid #dedede;
+            color: #1a237e;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        .checkout-terms { margin: 2px 0 0; }
+        .checkout-terms a { color: #e8511b; font-weight: 700; }
+        .checkout-field-error,
+        .checkout-form-error {
+            min-height: 0;
+            margin-top: 5px;
+            color: #c62828;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .checkout-field-error:empty,
+        .checkout-form-error:empty { display: none; }
+        .checkout-modal-box input.checkout-invalid,
+        .checkout-modal-box textarea.checkout-invalid,
+        .checkout-modal-box select.checkout-invalid,
+        .checkout-phone-input.checkout-invalid {
+            border-color: #c62828 !important;
+            background: #fff7f7;
+        }
+        .checkout-form-error { margin: 10px 0; text-align: center; }
+        .checkout-security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            margin-top: 13px;
+            color: #4b5563;
+            text-align: left;
+        }
+        .checkout-security-note > i { color: #15803d; font-size: 19px; }
+        .checkout-security-note strong,
+        .checkout-security-note small { display: block; }
+        .checkout-security-note strong { font-size: 13px; }
+        .checkout-security-note small { margin-top: 1px; color: #7b7b7b; font-size: 11px; }
+        @media (max-width: 620px) {
+            .checkout-modal-overlay { align-items: flex-end; padding: 0; }
+            .checkout-modal-box {
+                width: 100%;
+                max-height: 94vh;
+                padding: 22px 15px 18px;
+                border-radius: 22px 22px 0 0;
+            }
+            .checkout-header { margin-bottom: 15px; }
+            .checkout-header h2 { font-size: 21px; }
+            .checkout-section { padding: 14px 12px; }
+            .checkout-modal-box .form-row,
+            .checkout-address-grid,
+            .checkout-payment-options { grid-template-columns: 1fr; gap: 0; }
+            .checkout-payment-options { gap: 8px; }
+            .checkout-address-mode { grid-template-columns: 1fr 1fr; }
+            .checkout-address-mode button { padding: 8px 5px; font-size: 12px; }
+            .checkout-coupon-row { grid-template-columns: minmax(0, 1fr) 78px; }
+            .checkout-coupon-row button { min-width: 0; padding: 10px 8px; }
         }
 
         .order-detail-modal-overlay {
@@ -3748,7 +4085,181 @@
         <img id="modalZoomImage" src="" alt="" />
     </div>
     <div class="cart-modal-overlay" id="cartModal"><div class="cart-modal-box"><div class="cart-header"><h2><i class="fas fa-shopping-cart"></i> Your Cart</h2><button class="cart-close" onclick="closeCartModal()">&times;</button></div><div class="cart-items" id="cartItems"></div><div class="cart-footer"><div class="cart-total"><span>Total:</span><span class="total-amount" id="cartTotal">₹0.00</span></div><button class="checkout-btn" id="checkoutBtn" onclick="openCheckoutForm()"><i class="fas fa-credit-card"></i> Proceed to Checkout</button></div></div></div>
-    <div class="checkout-modal-overlay" id="checkoutModal"><div class="checkout-modal-box"><div class="checkout-header"><h2><i class="fas fa-user"></i> Customer Details</h2><button class="checkout-close" onclick="closeCheckoutForm()">&times;</button></div><form id="checkoutForm" onsubmit="placeOrder(event)"><div class="form-group"><label>Full Name <span class="required">*</span></label><input type="text" id="custName" placeholder="Enter your full name" required /></div><div class="form-row"><div class="form-group"><label>Email <span class="required">*</span></label><input type="email" id="custEmail" placeholder="your@gmail.com" required /></div><div class="form-group"><label>Phone <span class="required">*</span></label><input type="tel" id="custPhone" placeholder="9876543210" required /></div></div><div class="form-group"><label>Delivery Address <span class="required">*</span></label><textarea id="custAddress" placeholder="Street, City, State, Pincode" required></textarea></div><div class="form-group"><label>Payment Method <span class="required">*</span></label><select id="custPaymentMethod" required><option>Cash on Delivery</option><option>UPI</option><option>Credit Card</option><option>Debit Card</option><option>Net Banking</option><option>Wallet</option></select></div><div class="form-group"><label>Order Notes (Optional)</label><textarea id="custNotes" placeholder="Any special instructions..."></textarea></div><div class="checkout-summary"><span>Order Total:</span><span class="summary-amount" id="checkoutTotal">₹0.00</span></div><button type="submit" class="place-order-btn" id="placeOrderBtn"><i class="fas fa-check-circle"></i> Place Order</button></form></div></div>
+    <div class="checkout-modal-overlay" id="checkoutModal">
+        <div class="checkout-modal-box" role="dialog" aria-modal="true" aria-labelledby="checkoutTitle">
+            <div class="checkout-header">
+                <h2 id="checkoutTitle"><i class="fas fa-user"></i> Customer Details</h2>
+                <button type="button" class="checkout-close" onclick="closeCheckoutForm()" aria-label="Close checkout">&times;</button>
+            </div>
+            <form id="checkoutForm" onsubmit="placeOrder(event)" novalidate>
+                <section class="checkout-section" aria-labelledby="checkoutContactTitle">
+                    <h3 id="checkoutContactTitle"><i class="fas fa-address-card"></i> Contact Details</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="custFirstName">First Name <span class="required">*</span></label>
+                            <input type="text" id="custFirstName" maxlength="60" autocomplete="given-name" placeholder="First name" />
+                            <div class="checkout-field-error" id="custFirstNameError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="custLastName">Last Name <span class="required">*</span></label>
+                            <input type="text" id="custLastName" maxlength="60" autocomplete="family-name" placeholder="Last name" />
+                            <div class="checkout-field-error" id="custLastNameError"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="custEmail">Email <span class="required">*</span></label>
+                        <input type="email" id="custEmail" maxlength="150" autocomplete="email" placeholder="your@gmail.com" />
+                        <div class="checkout-field-error" id="custEmailError"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="custPhone">Phone Number <span class="required">*</span></label>
+                            <div class="checkout-phone-input">
+                                <span class="checkout-phone-prefix">+91</span>
+                                <input type="tel" id="custPhone" maxlength="10" inputmode="numeric" autocomplete="tel-national" placeholder="9876543210" oninput="sanitizeCheckoutPhone(this)" />
+                            </div>
+                            <div class="checkout-field-error" id="custPhoneError"></div>
+                        </div>
+                        <div class="form-group">
+                            <label for="custAlternatePhone">Alternate Phone Number <span class="optional-label">(Optional)</span></label>
+                            <div class="checkout-phone-input">
+                                <span class="checkout-phone-prefix">+91</span>
+                                <input type="tel" id="custAlternatePhone" maxlength="10" inputmode="numeric" autocomplete="tel-national" placeholder="9876543210" oninput="sanitizeCheckoutPhone(this)" />
+                            </div>
+                            <div class="checkout-field-error" id="custAlternatePhoneError"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="checkout-section" aria-labelledby="checkoutAddressTitle">
+                    <h3 id="checkoutAddressTitle"><i class="fas fa-map-marker-alt"></i> Delivery Address</h3>
+                    <div class="checkout-address-mode" id="checkoutAddressMode">
+                        <button type="button" id="selectSavedAddressBtn" onclick="setCheckoutAddressMode('saved')"><i class="fas fa-bookmark"></i> Select Address</button>
+                        <button type="button" id="addNewAddressBtn" onclick="setCheckoutAddressMode('new')"><i class="fas fa-plus"></i> Add New Address</button>
+                    </div>
+                    <div class="checkout-saved-address-panel" id="checkoutSavedAddressPanel">
+                        <label for="savedAddressSelect">Saved Addresses</label>
+                        <select id="savedAddressSelect" onchange="selectCheckoutSavedAddress(this.value)"></select>
+                        <div class="saved-address-preview" id="savedAddressPreview"></div>
+                        <div class="checkout-field-error" id="savedAddressError"></div>
+                    </div>
+                    <div class="checkout-new-address-fields" id="checkoutNewAddressFields">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="custHouse">House No. / Building Name <span class="required">*</span></label>
+                                <input type="text" id="custHouse" maxlength="120" autocomplete="address-line1" placeholder="House no. or building name" />
+                                <div class="checkout-field-error" id="custHouseError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="custStreet">Street / Area <span class="required">*</span></label>
+                                <input type="text" id="custStreet" maxlength="150" autocomplete="address-line2" placeholder="Street or area" />
+                                <div class="checkout-field-error" id="custStreetError"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="custLandmark">Landmark <span class="optional-label">(Optional)</span></label>
+                            <input type="text" id="custLandmark" maxlength="120" placeholder="Nearby landmark" />
+                            <div class="checkout-field-error" id="custLandmarkError"></div>
+                        </div>
+                        <div class="checkout-address-grid">
+                            <div class="form-group">
+                                <label for="custCity">City <span class="required">*</span></label>
+                                <input type="text" id="custCity" maxlength="80" autocomplete="address-level2" placeholder="City" />
+                                <div class="checkout-field-error" id="custCityError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="custState">State <span class="required">*</span></label>
+                                <input type="text" id="custState" maxlength="80" autocomplete="address-level1" placeholder="State" />
+                                <div class="checkout-field-error" id="custStateError"></div>
+                            </div>
+                            <div class="form-group">
+                                <label for="custPincode">Pincode <span class="required">*</span></label>
+                                <input type="text" id="custPincode" maxlength="6" inputmode="numeric" autocomplete="postal-code" placeholder="600001" oninput="sanitizeCheckoutPincode(this)" />
+                                <div class="checkout-field-error" id="custPincodeError"></div>
+                            </div>
+                        </div>
+                        <div class="form-group checkout-address-type-group">
+                            <span class="checkout-field-label">Address Type <span class="required">*</span></span>
+                            <div class="checkout-address-types">
+                                <label><input type="radio" name="custAddressType" value="Home" checked /> <i class="fas fa-home"></i> Home</label>
+                                <label><input type="radio" name="custAddressType" value="Work" /> <i class="fas fa-briefcase"></i> Work</label>
+                                <label><input type="radio" name="custAddressType" value="Other" /> <i class="fas fa-map-pin"></i> Other</label>
+                            </div>
+                            <div class="checkout-field-error" id="custAddressTypeError"></div>
+                        </div>
+                        <label class="checkout-checkbox-row" for="saveCheckoutAddress">
+                            <input type="checkbox" id="saveCheckoutAddress" />
+                            <span>Save this address for future orders</span>
+                        </label>
+                    </div>
+                </section>
+
+                <section class="checkout-section" aria-labelledby="checkoutPaymentTitle">
+                    <h3 id="checkoutPaymentTitle"><i class="fas fa-wallet"></i> Payment Method <span class="required">*</span></h3>
+                    <div class="checkout-payment-options" id="checkoutPaymentOptions">
+                        <label class="checkout-payment-card selected">
+                            <input type="radio" name="custPaymentMethod" value="Cash on Delivery" checked onchange="selectCheckoutPayment(this.value)" />
+                            <span class="payment-icon"><i class="fas fa-money-bill-wave"></i></span>
+                            <span><strong>Cash on Delivery</strong><small>Pay when the order arrives</small></span>
+                        </label>
+                        <label class="checkout-payment-card">
+                            <input type="radio" name="custPaymentMethod" value="UPI" onchange="selectCheckoutPayment(this.value)" />
+                            <span class="payment-icon"><i class="fas fa-qrcode"></i></span>
+                            <span><strong>UPI</strong><small>Pay using any UPI app</small></span>
+                        </label>
+                        <label class="checkout-payment-card">
+                            <input type="radio" name="custPaymentMethod" value="Credit/Debit Card" onchange="selectCheckoutPayment(this.value)" />
+                            <span class="payment-icon"><i class="fas fa-credit-card"></i></span>
+                            <span><strong>Credit/Debit Card</strong><small>Visa, Mastercard and RuPay</small></span>
+                        </label>
+                        <label class="checkout-payment-card">
+                            <input type="radio" name="custPaymentMethod" value="Net Banking" onchange="selectCheckoutPayment(this.value)" />
+                            <span class="payment-icon"><i class="fas fa-university"></i></span>
+                            <span><strong>Net Banking</strong><small>Pay securely through your bank</small></span>
+                        </label>
+                    </div>
+                    <div class="checkout-field-error" id="custPaymentMethodError"></div>
+                    <div class="checkout-cod-message" id="checkoutCodMessage"><i class="fas fa-hand-holding-usd"></i> Pay <strong id="checkoutCodAmount">₹0.00</strong> on delivery</div>
+                </section>
+
+                <section class="checkout-section checkout-coupon-section" aria-labelledby="checkoutCouponTitle">
+                    <h3 id="checkoutCouponTitle"><i class="fas fa-tag"></i> Apply Coupon</h3>
+                    <div class="checkout-coupon-row">
+                        <input type="text" id="checkoutCouponCode" maxlength="40" autocomplete="off" placeholder="Enter coupon code" oninput="resetCheckoutCouponIfChanged()" />
+                        <button type="button" id="applyCheckoutCouponBtn" onclick="applyCheckoutCoupon()">Apply</button>
+                    </div>
+                    <div class="checkout-coupon-message" id="checkoutCouponMessage"></div>
+                </section>
+
+                <div class="form-group">
+                    <label for="custNotes">Order Notes <span class="optional-label">(Optional)</span></label>
+                    <textarea id="custNotes" maxlength="500" placeholder="Delivery instructions, preferred delivery time, etc."></textarea>
+                </div>
+
+                <section class="checkout-summary checkout-summary-detailed" aria-labelledby="checkoutSummaryTitle">
+                    <h3 id="checkoutSummaryTitle">Order Summary</h3>
+                    <div class="checkout-summary-row"><span>Item Total</span><span id="checkoutItemTotal">₹0.00</span></div>
+                    <div class="checkout-summary-row"><span>Delivery Charge</span><span id="checkoutDeliveryCharge">₹0.00</span></div>
+                    <div class="checkout-summary-row discount-row"><span>Discount</span><span id="checkoutDiscount">-₹0.00</span></div>
+                    <div class="checkout-summary-row"><span>Tax</span><span id="checkoutTax">₹0.00</span></div>
+                    <div class="checkout-summary-row checkout-grand-total"><span>Grand Total</span><span class="summary-amount" id="checkoutTotal">₹0.00</span></div>
+                </section>
+
+                <label class="checkout-checkbox-row checkout-terms" for="checkoutTerms">
+                    <input type="checkbox" id="checkoutTerms" />
+                    <span>I acknowledge and agree to the <a href="#" onclick="event.preventDefault()">Terms &amp; Conditions</a>.</span>
+                </label>
+                <div class="checkout-field-error" id="checkoutTermsError"></div>
+                <div class="checkout-form-error" id="checkoutFormError"></div>
+
+                <button type="submit" class="place-order-btn" id="placeOrderBtn"><i class="fas fa-check-circle"></i> Place Order</button>
+                <div class="checkout-security-note">
+                    <i class="fas fa-lock"></i>
+                    <span><strong>Secure Checkout</strong><small>Payment information is protected</small></span>
+                </div>
+            </form>
+        </div>
+    </div>
     <div class="order-detail-modal-overlay" id="orderDetailModal"><div class="order-detail-modal-box"><button class="modal-close" onclick="closeOrderDetail()">&times;</button><h2><i class="fas fa-receipt"></i> Order Details</h2><div id="orderDetailContent"></div></div></div>
     <div class="cancel-order-modal-overlay" id="cancelOrderModal" role="dialog" aria-modal="true" aria-labelledby="cancelOrderTitle">
         <div class="cancel-order-modal-box">
@@ -4191,6 +4702,20 @@
         let customMinPrice = null;
         let customMaxPrice = null;
         let directCheckoutItems = null;
+        const CHECKOUT_SAVED_ADDRESSES_KEY = 'favlor_checkout_saved_addresses';
+        let checkoutAddressMode = 'new';
+        let checkoutSelectedAddressId = '';
+        let checkoutCouponState = null;
+        let checkoutOrderSubmissionInProgress = false;
+        let checkoutSummaryState = {
+            itemTotal: 0,
+            deliveryCharge: 0,
+            productDiscount: 0,
+            couponDiscount: 0,
+            discount: 0,
+            tax: 0,
+            grandTotal: 0
+        };
         let wishlist = JSON.parse(localStorage.getItem('favlor_wishlist') || '[]');
         let compareList = JSON.parse(localStorage.getItem('favlor_compare') || '[]');
         let currentProduct = null;
@@ -4762,6 +5287,481 @@
             return true;
         }
 
+        function normalizeCheckoutPhone(value) {
+            const digits = String(value || '').replace(/\D/g, '');
+            return digits.length > 10 ? digits.slice(-10) : digits;
+        }
+
+        function sanitizeCheckoutPhone(input) {
+            input.value = String(input.value || '').replace(/\D/g, '').slice(0, 10);
+            input.classList.remove('checkout-invalid');
+            input.closest('.checkout-phone-input')?.classList.remove('checkout-invalid');
+            const error = document.getElementById(input.id + 'Error');
+            if (error) error.textContent = '';
+        }
+
+        function sanitizeCheckoutPincode(input) {
+            input.value = String(input.value || '').replace(/\D/g, '').slice(0, 6);
+            input.classList.remove('checkout-invalid');
+            const error = document.getElementById('custPincodeError');
+            if (error) error.textContent = '';
+        }
+
+        function splitCheckoutCustomerName(fullName) {
+            const parts = String(fullName || '').trim().split(/\s+/).filter(Boolean);
+            return {
+                firstName: parts.shift() || '',
+                lastName: parts.join(' ')
+            };
+        }
+
+        function checkoutAddressStorageKey() {
+            const current = getCurrentUser() || {};
+            return String(current.id || current.email || 'customer').toLowerCase();
+        }
+
+        function readCheckoutAddressStore() {
+            try {
+                const parsed = JSON.parse(localStorage.getItem(CHECKOUT_SAVED_ADDRESSES_KEY) || '{}');
+                return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : {};
+            } catch (_) {
+                return {};
+            }
+        }
+
+        function readLocalCheckoutAddresses() {
+            const store = readCheckoutAddressStore();
+            const addresses = store[checkoutAddressStorageKey()];
+            return Array.isArray(addresses) ? addresses : [];
+        }
+
+        function checkoutAddressIdentity(address) {
+            return [
+                address.house, address.street, address.landmark,
+                address.city, address.state, address.pincode
+            ].map(value => String(value || '').trim()).filter(Boolean).join(', ')
+                .toLowerCase().replace(/\s+/g, ' ').replace(/\s*,\s*/g, ',');
+        }
+
+        function saveCheckoutAddressLocally(address) {
+            const store = readCheckoutAddressStore();
+            const key = checkoutAddressStorageKey();
+            const existing = Array.isArray(store[key]) ? store[key] : [];
+            const identity = checkoutAddressIdentity(address);
+            const saved = {
+                ...address,
+                id: address.id && address.id !== 'profile' ? address.id : 'address-' + Date.now(),
+                savedAt: new Date().toISOString()
+            };
+            const duplicateIndex = existing.findIndex(item => checkoutAddressIdentity(item) === identity);
+            if (duplicateIndex >= 0) existing[duplicateIndex] = { ...existing[duplicateIndex], ...saved, id: existing[duplicateIndex].id };
+            else existing.unshift(saved);
+            store[key] = existing.slice(0, 10);
+            localStorage.setItem(CHECKOUT_SAVED_ADDRESSES_KEY, JSON.stringify(store));
+            return saved;
+        }
+
+        function getCheckoutSavedAddresses() {
+            const profile = typeof window.favlorGetCheckoutCustomer === 'function'
+                ? window.favlorGetCheckoutCustomer()
+                : null;
+            const combined = [];
+            if (profile && [profile.address, profile.city, profile.state, profile.pincode].some(Boolean)) {
+                combined.push({
+                    id: 'profile',
+                    type: profile.address_type || 'Home',
+                    house: profile.address || '',
+                    street: profile.street || profile.area || '',
+                    landmark: profile.landmark || '',
+                    city: profile.city || '',
+                    state: profile.state || '',
+                    pincode: profile.pincode || ''
+                });
+            }
+            combined.push(...readLocalCheckoutAddresses());
+            const seen = new Set();
+            return combined.filter(address => {
+                const identity = checkoutAddressIdentity(address);
+                if (!identity || seen.has(identity)) return false;
+                seen.add(identity);
+                return true;
+            });
+        }
+
+        function formatCheckoutAddress(address) {
+            return [
+                address.house, address.street, address.landmark,
+                address.city, address.state, address.pincode
+            ].map(value => String(value || '').trim()).filter(Boolean).join(', ');
+        }
+
+        function populateCheckoutAddressFields(address) {
+            document.getElementById('custHouse').value = address?.house || '';
+            document.getElementById('custStreet').value = address?.street || '';
+            document.getElementById('custLandmark').value = address?.landmark || '';
+            document.getElementById('custCity').value = address?.city || '';
+            document.getElementById('custState').value = address?.state || '';
+            document.getElementById('custPincode').value = address?.pincode || '';
+            const type = address?.type || 'Home';
+            const typeInput = document.querySelector('input[name="custAddressType"][value="' + type + '"]')
+                || document.querySelector('input[name="custAddressType"][value="Other"]');
+            if (typeInput) typeInput.checked = true;
+        }
+
+        function resetCheckoutNewAddressFields() {
+            ['custHouse', 'custStreet', 'custLandmark', 'custCity', 'custState', 'custPincode']
+                .forEach(id => { document.getElementById(id).value = ''; });
+            const home = document.querySelector('input[name="custAddressType"][value="Home"]');
+            if (home) home.checked = true;
+            document.getElementById('saveCheckoutAddress').checked = false;
+        }
+
+        function selectCheckoutSavedAddress(addressId) {
+            const addresses = getCheckoutSavedAddresses();
+            const address = addresses.find(item => String(item.id) === String(addressId));
+            checkoutSelectedAddressId = address ? String(address.id) : '';
+            const preview = document.getElementById('savedAddressPreview');
+            if (!address) {
+                preview.textContent = '';
+                return;
+            }
+            populateCheckoutAddressFields(address);
+            preview.innerHTML = '<strong>' + escapeHtml(address.type || 'Address') + '</strong>' +
+                escapeHtml(formatCheckoutAddress(address));
+            document.getElementById('savedAddressError').textContent = '';
+        }
+
+        function setCheckoutAddressMode(mode, preserveNewValues = false) {
+            const addresses = getCheckoutSavedAddresses();
+            const hasSavedAddresses = addresses.length > 0;
+            const previousMode = checkoutAddressMode;
+            checkoutAddressMode = mode === 'saved' && hasSavedAddresses ? 'saved' : 'new';
+            const savedButton = document.getElementById('selectSavedAddressBtn');
+            const newButton = document.getElementById('addNewAddressBtn');
+            const savedPanel = document.getElementById('checkoutSavedAddressPanel');
+            const newFields = document.getElementById('checkoutNewAddressFields');
+            savedButton.disabled = !hasSavedAddresses;
+            savedButton.classList.toggle('active', checkoutAddressMode === 'saved');
+            newButton.classList.toggle('active', checkoutAddressMode === 'new');
+            savedPanel.hidden = checkoutAddressMode !== 'saved';
+            newFields.hidden = checkoutAddressMode !== 'new';
+
+            if (checkoutAddressMode === 'saved') {
+                const select = document.getElementById('savedAddressSelect');
+                const selectedId = checkoutSelectedAddressId || String(addresses[0].id);
+                select.value = selectedId;
+                selectCheckoutSavedAddress(select.value || String(addresses[0].id));
+            } else if (!preserveNewValues && previousMode === 'saved') {
+                resetCheckoutNewAddressFields();
+            }
+        }
+
+        function renderCheckoutSavedAddresses() {
+            const addresses = getCheckoutSavedAddresses();
+            const select = document.getElementById('savedAddressSelect');
+            select.innerHTML = addresses.map(address =>
+                '<option value="' + escapeHtml(String(address.id)) + '">' +
+                escapeHtml((address.type || 'Address') + ' - ' + (address.city || address.house || 'Saved address')) +
+                '</option>'
+            ).join('');
+            if (addresses.length) {
+                checkoutSelectedAddressId = String(addresses[0].id);
+                setCheckoutAddressMode('saved', true);
+            } else {
+                checkoutSelectedAddressId = '';
+                setCheckoutAddressMode('new', true);
+            }
+        }
+
+        function formatCheckoutMoney(value) {
+            const symbol = getSettings().currencySymbol || '₹';
+            return symbol + Math.max(0, Number(value) || 0).toFixed(2);
+        }
+
+        function getCheckoutBaseTotals() {
+            const items = getCheckoutItems();
+            let offerTotal = 0;
+            let itemTotal = 0;
+            items.forEach(item => {
+                const quantity = Math.max(1, Number(item.quantity) || 1);
+                const offerPrice = Number(item.price) || 0;
+                const product = productsCache.find(row => Number(row.id) === Number(item.id));
+                const originalPrice = Math.max(offerPrice, Number(product?.originalPrice) || offerPrice);
+                offerTotal += offerPrice * quantity;
+                itemTotal += originalPrice * quantity;
+            });
+            return {
+                offerTotal,
+                itemTotal,
+                productDiscount: Math.max(0, itemTotal - offerTotal)
+            };
+        }
+
+        function calculateCheckoutCouponDiscount(offerTotal) {
+            if (!checkoutCouponState) return 0;
+            const value = Math.max(0, Number(checkoutCouponState.value) || 0);
+            let discount = checkoutCouponState.type === 'fixed'
+                ? value
+                : offerTotal * (value / 100);
+            const maxDiscount = Number(checkoutCouponState.maxDiscount) || 0;
+            if (maxDiscount > 0) discount = Math.min(discount, maxDiscount);
+            return Math.min(offerTotal, Math.max(0, discount));
+        }
+
+        function recalculateCheckoutSummary() {
+            const base = getCheckoutBaseTotals();
+            const deliveryCharge = 0;
+            const tax = 0;
+            const couponDiscount = calculateCheckoutCouponDiscount(base.offerTotal);
+            const discount = base.productDiscount + couponDiscount;
+            const grandTotal = Math.max(0, base.offerTotal + deliveryCharge + tax - couponDiscount);
+            checkoutSummaryState = {
+                itemTotal: base.itemTotal,
+                deliveryCharge,
+                productDiscount: base.productDiscount,
+                couponDiscount,
+                discount,
+                tax,
+                grandTotal
+            };
+            document.getElementById('checkoutItemTotal').textContent = formatCheckoutMoney(base.itemTotal);
+            document.getElementById('checkoutDeliveryCharge').textContent = formatCheckoutMoney(deliveryCharge);
+            document.getElementById('checkoutDiscount').textContent = '-' + formatCheckoutMoney(discount);
+            document.getElementById('checkoutTax').textContent = formatCheckoutMoney(tax);
+            document.getElementById('checkoutTotal').textContent = formatCheckoutMoney(grandTotal);
+            document.getElementById('checkoutCodAmount').textContent = formatCheckoutMoney(grandTotal);
+            return checkoutSummaryState;
+        }
+
+        function selectCheckoutPayment(paymentMethod) {
+            document.querySelectorAll('.checkout-payment-card').forEach(card => {
+                const radio = card.querySelector('input[type="radio"]');
+                card.classList.toggle('selected', radio?.checked);
+            });
+            document.getElementById('checkoutCodMessage').hidden = paymentMethod !== 'Cash on Delivery';
+            document.getElementById('custPaymentMethodError').textContent = '';
+            recalculateCheckoutSummary();
+        }
+
+        function getSelectedCheckoutPayment() {
+            return document.querySelector('input[name="custPaymentMethod"]:checked')?.value || '';
+        }
+
+        function resetCheckoutCouponIfChanged() {
+            const input = document.getElementById('checkoutCouponCode');
+            input.value = input.value.toUpperCase().replace(/[^A-Z0-9_-]/g, '');
+            if (checkoutCouponState && input.value !== checkoutCouponState.code) {
+                checkoutCouponState = null;
+                const message = document.getElementById('checkoutCouponMessage');
+                message.textContent = '';
+                message.className = 'checkout-coupon-message';
+                recalculateCheckoutSummary();
+            }
+        }
+
+        function normalizeCheckoutCoupon(record) {
+            if (!record) return null;
+            const typeText = String(record.discount_type || record.type || 'percentage').toLowerCase();
+            return {
+                code: String(record.code || record.coupon_code || '').trim().toUpperCase(),
+                status: String(record.status || (record.active === false ? 'inactive' : 'active')).toLowerCase(),
+                type: typeText.includes('fixed') || typeText.includes('amount') ? 'fixed' : 'percentage',
+                value: Number(record.discount_value ?? record.value ?? record.amount ?? record.discount ?? 0),
+                minOrder: Number(record.min_order_amount ?? record.minimum_order ?? record.min_purchase ?? 0),
+                maxDiscount: Number(record.max_discount_amount ?? record.maximum_discount ?? record.max_discount ?? 0),
+                startsAt: record.start_date || record.starts_at || record.valid_from || null,
+                endsAt: record.end_date || record.ends_at || record.expiry_date || record.valid_until || null
+            };
+        }
+
+        function findLocalCheckoutCoupon(code) {
+            const sources = [];
+            const settingsCoupons = getSettings().coupons;
+            if (Array.isArray(settingsCoupons)) sources.push(...settingsCoupons);
+            ['favlor_coupons', 'store_coupons'].forEach(key => {
+                try {
+                    const parsed = JSON.parse(localStorage.getItem(key) || '[]');
+                    if (Array.isArray(parsed)) sources.push(...parsed);
+                } catch (_) {}
+            });
+            return sources.find(item =>
+                String(item.code || item.coupon_code || '').trim().toUpperCase() === code
+            ) || null;
+        }
+
+        async function applyCheckoutCoupon() {
+            const input = document.getElementById('checkoutCouponCode');
+            const button = document.getElementById('applyCheckoutCouponBtn');
+            const message = document.getElementById('checkoutCouponMessage');
+            const code = input.value.trim().toUpperCase();
+            message.className = 'checkout-coupon-message';
+            if (!code) {
+                message.textContent = 'Enter a coupon code.';
+                message.classList.add('error');
+                input.focus();
+                return;
+            }
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            try {
+                let record = findLocalCheckoutCoupon(code);
+                if (!record && typeof supabaseClient !== 'undefined') {
+                    const result = await supabaseClient.from('coupons').select('*').ilike('code', code).limit(1);
+                    if (!result.error) record = (result.data || [])[0] || null;
+                }
+                const coupon = normalizeCheckoutCoupon(record);
+                const now = Date.now();
+                const base = getCheckoutBaseTotals();
+                if (!coupon || coupon.code !== code) throw new Error('Coupon code is invalid or unavailable.');
+                if (!['active', 'enabled', 'valid'].includes(coupon.status)) throw new Error('This coupon is not active.');
+                if (coupon.startsAt && new Date(coupon.startsAt).getTime() > now) throw new Error('This coupon is not active yet.');
+                if (coupon.endsAt && new Date(coupon.endsAt).getTime() < now) throw new Error('This coupon has expired.');
+                if (base.offerTotal < coupon.minOrder) {
+                    throw new Error('Minimum order value is ' + formatCheckoutMoney(coupon.minOrder) + '.');
+                }
+                if (!(coupon.value > 0)) throw new Error('This coupon is not configured correctly.');
+                checkoutCouponState = coupon;
+                recalculateCheckoutSummary();
+                message.textContent = code + ' applied. You saved ' +
+                    formatCheckoutMoney(checkoutSummaryState.couponDiscount) + '.';
+                message.classList.add('success');
+            } catch (error) {
+                checkoutCouponState = null;
+                recalculateCheckoutSummary();
+                message.textContent = error.message || 'Unable to apply this coupon.';
+                message.classList.add('error');
+            } finally {
+                button.disabled = false;
+                button.textContent = 'Apply';
+            }
+        }
+
+        function clearCheckoutErrors() {
+            document.querySelectorAll('#checkoutForm .checkout-field-error, #checkoutForm .checkout-form-error')
+                .forEach(element => { element.textContent = ''; });
+            document.querySelectorAll('#checkoutForm .checkout-invalid')
+                .forEach(element => element.classList.remove('checkout-invalid'));
+        }
+
+        function setCheckoutError(errorId, message, inputId = '') {
+            const error = document.getElementById(errorId);
+            if (error) error.textContent = message;
+            const input = inputId ? document.getElementById(inputId) : null;
+            if (input) {
+                input.classList.add('checkout-invalid');
+                if (input.closest('.checkout-phone-input')) input.closest('.checkout-phone-input').classList.add('checkout-invalid');
+            }
+            return input;
+        }
+
+        function getCheckoutAddressInput() {
+            const type = document.querySelector('input[name="custAddressType"]:checked')?.value || '';
+            return {
+                type,
+                house: document.getElementById('custHouse').value.trim(),
+                street: document.getElementById('custStreet').value.trim(),
+                landmark: document.getElementById('custLandmark').value.trim(),
+                city: document.getElementById('custCity').value.trim(),
+                state: document.getElementById('custState').value.trim(),
+                pincode: document.getElementById('custPincode').value.trim()
+            };
+        }
+
+        function validateCheckoutDetails() {
+            clearCheckoutErrors();
+            let firstInvalid = null;
+            const recordInvalid = (errorId, message, inputId) => {
+                const input = setCheckoutError(errorId, message, inputId);
+                if (!firstInvalid) firstInvalid = input;
+            };
+            const firstName = document.getElementById('custFirstName').value.trim();
+            const lastName = document.getElementById('custLastName').value.trim();
+            const email = document.getElementById('custEmail').value.trim().toLowerCase();
+            const phone = normalizeCheckoutPhone(document.getElementById('custPhone').value);
+            const alternatePhone = normalizeCheckoutPhone(document.getElementById('custAlternatePhone').value);
+            const items = getCheckoutItems();
+
+            if (!firstName) recordInvalid('custFirstNameError', 'First Name is required.', 'custFirstName');
+            if (!lastName) recordInvalid('custLastNameError', 'Last Name is required.', 'custLastName');
+            if (!email) recordInvalid('custEmailError', 'Email is required.', 'custEmail');
+            else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                recordInvalid('custEmailError', 'Enter a valid email address.', 'custEmail');
+            }
+            if (!/^\d{10}$/.test(phone)) {
+                recordInvalid('custPhoneError', 'Enter exactly 10 digits.', 'custPhone');
+            }
+            if (alternatePhone && !/^\d{10}$/.test(alternatePhone)) {
+                recordInvalid('custAlternatePhoneError', 'Enter exactly 10 digits or leave it empty.', 'custAlternatePhone');
+            }
+
+            let address = null;
+            if (checkoutAddressMode === 'saved') {
+                address = getCheckoutSavedAddresses().find(item =>
+                    String(item.id) === String(document.getElementById('savedAddressSelect').value)
+                ) || null;
+                if (!address) {
+                    document.getElementById('savedAddressError').textContent = 'Select a saved address.';
+                    if (!firstInvalid) firstInvalid = document.getElementById('savedAddressSelect');
+                }
+            } else {
+                address = getCheckoutAddressInput();
+                if (!address.house) recordInvalid('custHouseError', 'House No. / Building Name is required.', 'custHouse');
+                if (!address.street) recordInvalid('custStreetError', 'Street / Area is required.', 'custStreet');
+                if (!address.city) recordInvalid('custCityError', 'City is required.', 'custCity');
+                if (!address.state) recordInvalid('custStateError', 'State is required.', 'custState');
+                if (!/^\d{6}$/.test(address.pincode)) {
+                    recordInvalid('custPincodeError', 'Enter a valid 6-digit pincode.', 'custPincode');
+                }
+                if (!address.type) {
+                    document.getElementById('custAddressTypeError').textContent = 'Select an address type.';
+                    if (!firstInvalid) firstInvalid = document.querySelector('input[name="custAddressType"]');
+                }
+            }
+
+            const paymentMethod = getSelectedCheckoutPayment();
+            if (!paymentMethod) {
+                document.getElementById('custPaymentMethodError').textContent = 'Select a payment method.';
+                if (!firstInvalid) firstInvalid = document.querySelector('input[name="custPaymentMethod"]');
+            }
+            if (!document.getElementById('checkoutTerms').checked) {
+                document.getElementById('checkoutTermsError').textContent = 'Accept the Terms & Conditions to place the order.';
+                if (!firstInvalid) firstInvalid = document.getElementById('checkoutTerms');
+            }
+            if (!items.length) {
+                document.getElementById('checkoutFormError').textContent = 'Your cart is empty.';
+                if (!firstInvalid) firstInvalid = document.getElementById('checkoutFormError');
+            }
+
+            if (firstInvalid) {
+                if (typeof firstInvalid.focus === 'function') firstInvalid.focus({ preventScroll: true });
+                firstInvalid.scrollIntoView?.({ behavior: 'smooth', block: 'center' });
+                return null;
+            }
+
+            const customerNotes = document.getElementById('custNotes').value.trim();
+            const noteParts = [];
+            if (customerNotes) noteParts.push(customerNotes);
+            if (alternatePhone) noteParts.push('Alternate phone: +91 ' + alternatePhone);
+            if (address?.type) noteParts.push('Address type: ' + address.type);
+            if (checkoutCouponState) noteParts.push('Coupon: ' + checkoutCouponState.code);
+            return {
+                firstName,
+                lastName,
+                name: firstName + ' ' + lastName,
+                email,
+                phone,
+                alternatePhone,
+                address,
+                shippingAddress: formatCheckoutAddress(address || {}),
+                paymentMethod,
+                notes: noteParts.join(' | '),
+                items,
+                saveAddress: checkoutAddressMode === 'new' && document.getElementById('saveCheckoutAddress').checked,
+                coupon: checkoutCouponState,
+                totals: recalculateCheckoutSummary()
+            };
+        }
+
         function openCheckoutForm(itemsOverride = null) {
             const isDirectCheckout = Array.isArray(itemsOverride);
             const items = isDirectCheckout ? itemsOverride : getCartItems();
@@ -4769,20 +5769,36 @@
             if (!isLoggedIn()) { showToast('Please login to checkout.', 'warning');
                 openAuthModal('login'); return; }
             directCheckoutItems = isDirectCheckout ? items : null;
-            const user = getCurrentUser();
-            if (user) {
-                document.getElementById('custName').value = user.name;
-                document.getElementById('custEmail').value = user.email;
-                if (user.phone) document.getElementById('custPhone').value = user.phone;
-            }
+            const form = document.getElementById('checkoutForm');
+            form.reset();
+            clearCheckoutErrors();
+            checkoutCouponState = null;
+            checkoutSelectedAddressId = '';
+            document.getElementById('checkoutCouponCode').value = '';
+            document.getElementById('checkoutCouponMessage').textContent = '';
+            document.getElementById('checkoutCouponMessage').className = 'checkout-coupon-message';
+
+            const user = getCurrentUser() || {};
+            const profile = typeof window.favlorGetCheckoutCustomer === 'function'
+                ? (window.favlorGetCheckoutCustomer() || {})
+                : {};
+            const name = splitCheckoutCustomerName(profile.full_name || user.name || '');
+            document.getElementById('custFirstName').value = name.firstName;
+            document.getElementById('custLastName').value = name.lastName;
+            document.getElementById('custEmail').value = profile.email || user.email || '';
+            document.getElementById('custPhone').value = normalizeCheckoutPhone(profile.phone || user.phone || '');
+            document.getElementById('custAlternatePhone').value = '';
+
+            renderCheckoutSavedAddresses();
+            selectCheckoutPayment('Cash on Delivery');
+            recalculateCheckoutSummary();
             closeCartModal();
-            const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
-            document.getElementById('checkoutTotal').textContent = `${getSettings().currencySymbol || '₹'}${total.toFixed(2)}`;
             document.getElementById('checkoutModal').classList.add('active');
             document.body.style.overflow = 'hidden';
         }
 
-        function closeCheckoutForm() {
+        function closeCheckoutForm(force = false) {
+            if (checkoutOrderSubmissionInProgress && !force) return;
             document.getElementById('checkoutModal').classList.remove('active');
             document.body.style.overflow = '';
             directCheckoutItems = null;
@@ -4793,23 +5809,27 @@
             if (!isLoggedIn()) { showToast('Please login.', 'warning');
                 closeCheckoutForm();
                 openAuthModal('login'); return; }
-            const name = document.getElementById('custName').value.trim();
-            const email = document.getElementById('custEmail').value.trim();
-            const phone = document.getElementById('custPhone').value.trim();
-            const address = document.getElementById('custAddress').value.trim();
-            const notes = document.getElementById('custNotes').value.trim();
-            if (!name || !email || !phone || !address) { showToast('Fill all required fields.', 'warning'); return; }
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast('Invalid email.', 'warning'); return; }
-            if (!/^[0-9]{10}$/.test(phone.replace(/[^0-9]/g, ''))) { showToast('Invalid phone.', 'warning'); return; }
+            const details = validateCheckoutDetails();
+            if (!details) return;
             const isDirectCheckout = Array.isArray(directCheckoutItems) && directCheckoutItems.length > 0;
-            const items = getCheckoutItems();
-            const total = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
             const order = {
                 id: 'FLRS-' + Date.now().toString().slice(-8),
-                customer: { name, email, phone, address, notes: notes || '' },
-                items: items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i
+                customer: {
+                    name: details.name,
+                    email: details.email,
+                    phone: details.phone,
+                    alternatePhone: details.alternatePhone,
+                    address: details.shippingAddress,
+                    notes: details.notes
+                },
+                items: details.items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity, image: i
                         .image })),
-                total: total,
+                subtotal: details.totals.itemTotal,
+                discount: details.totals.discount,
+                tax: details.totals.tax,
+                shipping: details.totals.deliveryCharge,
+                total: details.totals.grandTotal,
+                paymentMethod: details.paymentMethod,
                 status: 'Pending',
                 date: new Date().toISOString(),
                 deliveryDate: null
@@ -4817,11 +5837,12 @@
             let orders = getOrders();
             orders.push(order);
             saveOrders(orders);
+            if (details.saveAddress) saveCheckoutAddressLocally(details.address);
             if (!isDirectCheckout) saveCartItems([]);
-            closeCheckoutForm();
+            closeCheckoutForm(true);
             switchView('orders');
             renderOrders();
-            showToast(`✅ Order placed! ID: ${order.id}`, 'success');
+            showToast('Order placed! ID: ' + order.id, 'success');
         }
 
         function parseAdminPolicySwitch(value) {
@@ -6041,9 +7062,11 @@
                 nameDisplay.textContent = user.name;
                 dropdownName.textContent = user.name;
                 dropdownEmail.textContent = user.email;
-                document.getElementById('custName').value = user.name;
+                const checkoutName = splitCheckoutCustomerName(user.name);
+                document.getElementById('custFirstName').value = checkoutName.firstName;
+                document.getElementById('custLastName').value = checkoutName.lastName;
                 document.getElementById('custEmail').value = user.email;
-                if (user.phone) document.getElementById('custPhone').value = user.phone;
+                if (user.phone) document.getElementById('custPhone').value = normalizeCheckoutPhone(user.phone);
             } else {
                 avatar.setAttribute('aria-label', 'Login or register');
                 avatar.title = 'Login or Register';
@@ -6051,8 +7074,10 @@
                 nameDisplay.textContent = 'Guest';
                 dropdownName.textContent = 'Guest';
                 dropdownEmail.textContent = '—';
-                document.getElementById('custName').value = '';
+                document.getElementById('custFirstName').value = '';
+                document.getElementById('custLastName').value = '';
                 document.getElementById('custEmail').value = '';
+                document.getElementById('custPhone').value = '';
             }
         }
 
@@ -6193,8 +7218,16 @@
                     role: 'customer'
                 }));
                 updateUserUI();
-                if (document.getElementById('custAddress')) {
-                    document.getElementById('custAddress').value = [data.address, data.city, data.state, data.pincode].filter(Boolean).join(', ');
+                if (document.getElementById('custHouse')) {
+                    populateCheckoutAddressFields({
+                        type: 'Home',
+                        house: data.address || '',
+                        street: '',
+                        landmark: '',
+                        city: data.city || '',
+                        state: data.state || '',
+                        pincode: data.pincode || ''
+                    });
                 }
                 closeCustomerSettings();
                 showToast('Account settings updated successfully.', 'success');
@@ -6305,6 +7338,23 @@
         document.getElementById('cartModal').addEventListener('click', function(e) { if (e.target === this) closeCartModal(); });
         document.getElementById('checkoutModal').addEventListener('click', function(e) { if (e.target === this)
                 closeCheckoutForm(); });
+        document.getElementById('checkoutForm').addEventListener('input', function(e) {
+            const target = e.target;
+            if (!target?.id) return;
+            target.classList.remove('checkout-invalid');
+            target.closest('.checkout-phone-input')?.classList.remove('checkout-invalid');
+            const error = document.getElementById(target.id + 'Error');
+            if (error) error.textContent = '';
+            document.getElementById('checkoutFormError').textContent = '';
+        });
+        document.getElementById('checkoutForm').addEventListener('change', function(e) {
+            if (e.target.id === 'checkoutTerms' && e.target.checked) {
+                document.getElementById('checkoutTermsError').textContent = '';
+            }
+            if (e.target.name === 'custAddressType') {
+                document.getElementById('custAddressTypeError').textContent = '';
+            }
+        });
         document.getElementById('orderDetailModal').addEventListener('click', function(e) { if (e.target === this)
                 closeOrderDetail(); });
         document.getElementById('cancelOrderModal').addEventListener('click', function(e) { if (e.target === this)
@@ -6496,6 +7546,9 @@
         orders: [],
         payments: [],
         serviceRequests: []
+    };
+    window.favlorGetCheckoutCustomer = function () {
+        return customerState.customer ? { ...customerState.customer } : null;
     };
     let customerRealtimeChannel = null;
     let customerReloadTimer = null;
@@ -7153,45 +8206,84 @@
 
     window.placeOrder = async function (event) {
         event.preventDefault();
-        const context = await requireCustomerLogin(); if (!context) return;
-        const name = document.getElementById('custName').value.trim();
-        const email = document.getElementById('custEmail').value.trim().toLowerCase();
-        const phone = document.getElementById('custPhone').value.trim();
-        const address = document.getElementById('custAddress').value.trim();
-        const notes = document.getElementById('custNotes').value.trim();
-        const paymentMethod = document.getElementById('custPaymentMethod').value;
-        const items = getCheckoutItems();
-        if (!name || !email || !phone || !address || !items.length) return showToast('Fill all required fields.', 'warning');
-        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return showToast('Invalid email.', 'warning');
-        if (!/^[0-9]{10}$/.test(phone.replace(/[^0-9]/g, ''))) return showToast('Invalid phone.', 'warning');
+        if (checkoutOrderSubmissionInProgress) return;
+        const details = validateCheckoutDetails();
+        if (!details) return;
         const button = document.getElementById('placeOrderBtn');
-        button.disabled = true; button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Placing Order...';
+        checkoutOrderSubmissionInProgress = true;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing Order...';
+        document.getElementById('checkoutFormError').textContent = '';
         try {
+            const context = await requireCustomerLogin();
+            if (!context) return;
             const { data, error } = await supabaseClient.rpc('place_customer_order', {
-                p_customer_name: name,
-                p_customer_email: email,
-                p_customer_phone: phone,
-                p_shipping_address: address,
-                p_notes: notes || '',
-                p_payment_method: paymentMethod,
-                p_items: items.map(item => ({ product_id: Number(item.id), quantity: Number(item.quantity) }))
+                p_customer_name: details.name,
+                p_customer_email: details.email,
+                p_customer_phone: details.phone,
+                p_shipping_address: details.shippingAddress,
+                p_notes: details.notes || '',
+                p_payment_method: details.paymentMethod,
+                p_items: details.items.map(item => ({
+                    product_id: Number(item.id),
+                    quantity: Number(item.quantity)
+                }))
             });
             if (error) throw error;
+
+            if (details.saveAddress) {
+                saveCheckoutAddressLocally(details.address);
+                const profileAddress = [
+                    details.address.house,
+                    details.address.street,
+                    details.address.landmark
+                ].filter(Boolean).join(', ');
+                const profileResult = await supabaseClient
+                    .from('customers')
+                    .update({
+                        full_name: details.name,
+                        phone: details.phone,
+                        address: profileAddress,
+                        city: details.address.city,
+                        state: details.address.state,
+                        pincode: details.address.pincode
+                    })
+                    .eq('auth_user_id', context.user.id);
+                if (profileResult.error) {
+                    console.warn('Saved address profile sync warning:', profileResult.error);
+                } else {
+                    customerState.customer = {
+                        ...customerState.customer,
+                        full_name: details.name,
+                        phone: details.phone,
+                        address: profileAddress,
+                        city: details.address.city,
+                        state: details.address.state,
+                        pincode: details.address.pincode
+                    };
+                }
+            }
+
             await Promise.all([
                 loadCustomerCart(), loadCustomerOrders(),
                 loadProductsFromSupabase({ showErrorToast: false })
             ]);
-            closeCheckoutForm();
+            closeCheckoutForm(true);
             document.getElementById('checkoutForm').reset();
+            checkoutCouponState = null;
             updateUserUI();
             switchView('orders'); renderOrders();
             const numbers = (data || []).map(row => row.order_number).filter(Boolean).join(', ');
             showToast(`Order placed successfully${numbers ? ': ' + numbers : ''}.`, 'success');
         } catch (error) {
             console.error('Supabase checkout error:', error);
+            document.getElementById('checkoutFormError').textContent =
+                error.message || 'Unable to place order. Please try again.';
             showToast(error.message || 'Unable to place order.', 'error');
         } finally {
-            button.disabled = false; button.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
+            checkoutOrderSubmissionInProgress = false;
+            button.disabled = false;
+            button.innerHTML = '<i class="fas fa-check-circle"></i> Place Order';
         }
     };
 
