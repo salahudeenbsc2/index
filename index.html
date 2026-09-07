@@ -4445,7 +4445,6 @@
             container.innerHTML = filtered.map(p => {
                 const inWishlist = wishlist.includes(p.id);
                 const inCompare = compareList.includes(p.id);
-                const isOutOfStock = productAvailability(p) === 'out_of_stock';
                 const discountHtml = p.discount ? `<span class="discount-badge">${p.discount}% OFF</span>` : '';
                 const stars = '★'.repeat(Math.floor(p.rating || 0)) + '☆'.repeat(5 - Math.floor(p.rating || 0));
                 // No stock badge on image
@@ -4467,10 +4466,6 @@
                                     <span class="product-price">${getSettings().currencySymbol || '₹'}${Number(p.price).toFixed(2)} <span>INR</span></span>
                                     ${p.originalPrice ? `<span class="product-original-price">${getSettings().currencySymbol || '₹'}${Number(p.originalPrice).toFixed(2)}</span>` : ''}
                                     ${p.discount ? `<span class="product-discount-percent">${p.discount}% OFF</span>` : ''}
-                                </div>
-                                <div class="card-actions-bottom">
-                                    <button class="btn-add-cart" onclick="event.stopPropagation(); addItemToCart(${JSON.stringify(p).replace(/"/g, '&quot;')})" ${isOutOfStock ? 'disabled' : ''}><i class="fas fa-cart-plus"></i> Add</button>
-                                    <button class="btn-buy-now" onclick="event.stopPropagation(); buyProductNow(${JSON.stringify(p).replace(/"/g, '&quot;')})" ${isOutOfStock ? 'disabled' : ''}><i class="fas fa-bolt"></i> Buy</button>
                                 </div>
                             </div>
                         </div>`;
