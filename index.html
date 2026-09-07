@@ -3200,6 +3200,129 @@
             min-height: 20px;
         }
 
+        /* ----- Customer Settings Modal ----- */
+        .customer-settings-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 10020;
+            padding: 18px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(6px);
+            align-items: center;
+            justify-content: center;
+        }
+        .customer-settings-overlay.active { display: flex; }
+        .customer-settings-box {
+            position: relative;
+            width: min(520px, 100%);
+            max-height: 92vh;
+            overflow-y: auto;
+            padding: 30px;
+            border-radius: 24px;
+            background: #fff;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.32);
+        }
+        .customer-settings-close {
+            position: absolute;
+            top: 13px;
+            right: 15px;
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border: none;
+            border-radius: 50%;
+            background: #f5f5f5;
+            color: #999;
+            font-size: 27px;
+            line-height: 1;
+            cursor: pointer;
+            display: grid;
+            place-items: center;
+        }
+        .customer-settings-close:hover { background: #fff3ed; color: #e8511b; }
+        .customer-settings-title {
+            margin: 0 42px 5px 0;
+            color: #bf360c;
+            font-size: 23px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .customer-settings-subtitle {
+            margin: 0 0 20px;
+            color: #888;
+            font-size: 13px;
+        }
+        .customer-settings-form { display: grid; gap: 13px; }
+        .customer-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 13px;
+        }
+        .customer-settings-field { display: grid; gap: 5px; }
+        .customer-settings-field.full { grid-column: 1 / -1; }
+        .customer-settings-field label {
+            color: #444;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .customer-settings-field input,
+        .customer-settings-field textarea {
+            width: 100%;
+            padding: 11px 13px;
+            border: 2px solid #e5e5e5;
+            border-radius: 11px;
+            background: #fafafa;
+            color: #222;
+            font: inherit;
+            outline: none;
+        }
+        .customer-settings-field input:focus,
+        .customer-settings-field textarea:focus {
+            border-color: #e8511b;
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(232, 81, 27, 0.08);
+        }
+        .customer-settings-field input[readonly] {
+            cursor: not-allowed;
+            color: #888;
+            background: #f2f2f2;
+        }
+        .customer-settings-field textarea { min-height: 78px; resize: vertical; }
+        .customer-settings-error {
+            min-height: 18px;
+            color: #c62828;
+            font-size: 13px;
+            text-align: center;
+        }
+        .customer-settings-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .customer-settings-actions button {
+            min-height: 44px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+        .customer-settings-cancel { background: #f0f0f0; color: #555; }
+        .customer-settings-save { background: #e8511b; color: #fff; }
+        .customer-settings-save:disabled { cursor: wait; opacity: 0.65; }
+
+        @media (max-width: 520px) {
+            .customer-settings-box { padding: 27px 18px 20px; border-radius: 20px; }
+            .customer-settings-grid { grid-template-columns: 1fr; }
+            .customer-settings-field.full { grid-column: auto; }
+            .checkout-modal-box .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+
         /* ----- TOAST ----- */
         .toast-container {
             position: fixed;
@@ -3480,6 +3603,7 @@
                     <div class="dropdown-divider"></div>
                     <button class="dropdown-item active" id="shopBtn" onclick="switchView('products')"><i class="fas fa-store"></i> Products</button>
                     <button class="dropdown-item" id="ordersBtn" onclick="switchView('orders')"><i class="fas fa-truck"></i> Orders <span class="badge-dot" id="orderBadge" style="display:none;"></span></button>
+                    <button class="dropdown-item" id="customerSettingsBtn" onclick="openCustomerSettings()"><i class="fas fa-cog"></i> Settings</button>
                     <button class="dropdown-item logout" onclick="handleSupabaseCustomerLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
                 </div>
             </div>
@@ -3716,6 +3840,30 @@
     <div class="otp-modal-overlay" id="forgotPasswordModal"><div class="otp-modal-box"><h2><i class="fas fa-key"></i> Forgot Password</h2><p>Enter your email address and we'll send you a secure password reset link.</p><div class="form-group"><label>Email</label><input type="email" id="forgotEmail" placeholder="your@gmail.com" style="width:100%; padding:12px 16px; border:2px solid #e0e0e0; border-radius:12px; font-size:14px;" /><div class="field-error" id="forgotEmailError"></div></div><div class="otp-error" id="forgotError"></div><div class="otp-actions" style="margin-top:16px;"><button class="btn-verify" onclick="sendForgotOTP()"><i class="fas fa-paper-plane"></i> Send Reset Link</button><button class="btn-resend" onclick="closeForgotPasswordModal()">Cancel</button></div></div></div>
     <div class="otp-modal-overlay" id="forgotOtpModal"><div class="otp-modal-box"><h2><i class="fas fa-shield-alt"></i> Verify OTP</h2><p>Enter the 6-digit OTP sent to your email.</p><input class="otp-input" id="forgotOtpInput" type="text" maxlength="6" placeholder="------" /><div class="otp-error" id="forgotOtpError"></div><div class="otp-actions"><button class="btn-verify" onclick="verifyForgotOTP()"><i class="fas fa-check"></i> Verify</button><button class="btn-resend" onclick="resendForgotOTP()"><i class="fas fa-redo"></i> Resend</button></div></div></div>
     <div class="reset-password-modal-overlay" id="resetPasswordModal"><div class="reset-password-modal-box"><h2><i class="fas fa-lock"></i> Reset Password</h2><p>Enter your new password below.</p><form id="resetPasswordForm" onsubmit="handleResetPassword(event)" novalidate><div class="form-group"><label>New Password <span class="required">*</span></label><input type="password" id="newPassword" placeholder="Min 6 characters" /><div class="field-error" id="newPasswordError"></div></div><div class="form-group"><label>Confirm Password <span class="required">*</span></label><input type="password" id="confirmNewPassword" placeholder="Re-enter new password" /><div class="field-error" id="confirmNewPasswordError"></div></div><div id="resetError" class="auth-error"></div><button type="submit" class="auth-btn">Update Password</button></form></div></div>
+
+    <div class="customer-settings-overlay" id="customerSettingsModal" onclick="if(event.target===this) closeCustomerSettings()" role="dialog" aria-modal="true" aria-labelledby="customerSettingsTitle">
+        <div class="customer-settings-box">
+            <button type="button" class="customer-settings-close" onclick="closeCustomerSettings()" aria-label="Close settings">&times;</button>
+            <h2 class="customer-settings-title" id="customerSettingsTitle"><i class="fas fa-cog"></i> Account Settings</h2>
+            <p class="customer-settings-subtitle">Update your customer profile and delivery details.</p>
+            <form class="customer-settings-form" id="customerSettingsForm" onsubmit="saveCustomerSettings(event)" novalidate>
+                <div class="customer-settings-grid">
+                    <div class="customer-settings-field full"><label for="settingsFullName">Full Name</label><input type="text" id="settingsFullName" maxlength="100" autocomplete="name" required /></div>
+                    <div class="customer-settings-field full"><label for="settingsEmail">Email</label><input type="email" id="settingsEmail" readonly /></div>
+                    <div class="customer-settings-field full"><label for="settingsPhone">Phone</label><input type="tel" id="settingsPhone" maxlength="20" autocomplete="tel" required /></div>
+                    <div class="customer-settings-field full"><label for="settingsAddress">Address</label><textarea id="settingsAddress" maxlength="300" autocomplete="street-address" placeholder="House number, street and area"></textarea></div>
+                    <div class="customer-settings-field"><label for="settingsCity">City</label><input type="text" id="settingsCity" maxlength="80" /></div>
+                    <div class="customer-settings-field"><label for="settingsState">State</label><input type="text" id="settingsState" maxlength="80" /></div>
+                    <div class="customer-settings-field full"><label for="settingsPincode">Pincode</label><input type="text" id="settingsPincode" maxlength="10" inputmode="numeric" /></div>
+                </div>
+                <div class="customer-settings-error" id="customerSettingsError"></div>
+                <div class="customer-settings-actions">
+                    <button type="button" class="customer-settings-cancel" onclick="closeCustomerSettings()">Cancel</button>
+                    <button type="submit" class="customer-settings-save" id="customerSettingsSaveBtn"><i class="fas fa-save"></i> Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <div class="toast-container" id="toastContainer"></div>
 
@@ -5924,6 +6072,132 @@
             const profile = document.getElementById('userProfile');
             if (profile && !profile.contains(e.target)) document.getElementById('userDropdown').classList.remove('open');
         });
+
+        async function openCustomerSettings() {
+            document.getElementById('userDropdown').classList.remove('open');
+            const modal = document.getElementById('customerSettingsModal');
+            const errorBox = document.getElementById('customerSettingsError');
+            const saveButton = document.getElementById('customerSettingsSaveBtn');
+            errorBox.textContent = '';
+
+            const current = getCurrentUser();
+            if (!current) {
+                openAuthModal('login');
+                return;
+            }
+
+            document.getElementById('settingsFullName').value = current.name || '';
+            document.getElementById('settingsEmail').value = current.email || '';
+            document.getElementById('settingsPhone').value = current.phone || '';
+            document.getElementById('settingsAddress').value = '';
+            document.getElementById('settingsCity').value = '';
+            document.getElementById('settingsState').value = '';
+            document.getElementById('settingsPincode').value = '';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            saveButton.disabled = true;
+
+            try {
+                const { data: authData, error: authError } = await supabaseClient.auth.getUser();
+                if (authError) throw authError;
+                if (!authData.user) throw new Error('Please login again to open settings.');
+
+                const { data, error } = await supabaseClient
+                    .from('customers')
+                    .select('full_name,email,phone,address,city,state,pincode')
+                    .eq('auth_user_id', authData.user.id)
+                    .maybeSingle();
+                if (error) throw error;
+                if (!data) throw new Error('Customer profile not found.');
+
+                document.getElementById('settingsFullName').value = data.full_name || current.name || '';
+                document.getElementById('settingsEmail').value = data.email || authData.user.email || current.email || '';
+                document.getElementById('settingsPhone').value = data.phone || current.phone || '';
+                document.getElementById('settingsAddress').value = data.address || '';
+                document.getElementById('settingsCity').value = data.city || '';
+                document.getElementById('settingsState').value = data.state || '';
+                document.getElementById('settingsPincode').value = data.pincode || '';
+            } catch (error) {
+                console.error('Customer settings load error:', error);
+                errorBox.textContent = error.message || 'Unable to load account settings.';
+            } finally {
+                saveButton.disabled = false;
+            }
+        }
+
+        function closeCustomerSettings() {
+            document.getElementById('customerSettingsModal').classList.remove('active');
+            document.body.style.overflow = '';
+            document.getElementById('customerSettingsError').textContent = '';
+        }
+
+        async function saveCustomerSettings(event) {
+            event.preventDefault();
+            const fullName = document.getElementById('settingsFullName').value.trim();
+            const phone = document.getElementById('settingsPhone').value.trim();
+            const address = document.getElementById('settingsAddress').value.trim();
+            const city = document.getElementById('settingsCity').value.trim();
+            const state = document.getElementById('settingsState').value.trim();
+            const pincode = document.getElementById('settingsPincode').value.trim();
+            const errorBox = document.getElementById('customerSettingsError');
+            const saveButton = document.getElementById('customerSettingsSaveBtn');
+            errorBox.textContent = '';
+
+            if (!fullName) {
+                errorBox.textContent = 'Full Name is required.';
+                document.getElementById('settingsFullName').focus();
+                return;
+            }
+            if (!phone) {
+                errorBox.textContent = 'Phone number is required.';
+                document.getElementById('settingsPhone').focus();
+                return;
+            }
+
+            saveButton.disabled = true;
+            saveButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+            try {
+                const { data: authData, error: authError } = await supabaseClient.auth.getUser();
+                if (authError) throw authError;
+                if (!authData.user) throw new Error('Your session expired. Please login again.');
+
+                const { data, error } = await supabaseClient
+                    .from('customers')
+                    .update({ full_name: fullName, phone, address, city, state, pincode })
+                    .eq('auth_user_id', authData.user.id)
+                    .select('full_name,email,phone,address,city,state,pincode')
+                    .maybeSingle();
+                if (error) throw error;
+                if (!data) throw new Error('Customer profile could not be updated.');
+
+                const metadataResult = await supabaseClient.auth.updateUser({
+                    data: { name: fullName, full_name: fullName, phone }
+                });
+                if (metadataResult.error) console.warn('Customer metadata update warning:', metadataResult.error);
+
+                const current = getCurrentUser() || {};
+                localStorage.setItem('favlor_auth', JSON.stringify({
+                    ...current,
+                    id: authData.user.id,
+                    name: data.full_name || fullName,
+                    email: data.email || authData.user.email || current.email || '',
+                    phone: data.phone || phone,
+                    role: 'customer'
+                }));
+                updateUserUI();
+                if (document.getElementById('custAddress')) {
+                    document.getElementById('custAddress').value = [data.address, data.city, data.state, data.pincode].filter(Boolean).join(', ');
+                }
+                closeCustomerSettings();
+                showToast('Account settings updated successfully.', 'success');
+            } catch (error) {
+                console.error('Customer settings save error:', error);
+                errorBox.textContent = error.message || 'Unable to save account settings.';
+            } finally {
+                saveButton.disabled = false;
+                saveButton.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            }
+        }
 
         // ----- FORGOT PASSWORD (demo) -----
         function openForgotPasswordModal() { document.getElementById('forgotPasswordModal').classList.add('active'); }
