@@ -554,9 +554,38 @@
             box-shadow: 0 4px 12px rgba(232, 81, 27, 0.25);
         }
         .cat-icon {
-            width: 28px;
+            width: 32px;
+            height: 32px;
+            flex: 0 0 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-radius: 8px;
             text-align: center;
             font-size: 16px;
+        }
+        .cat-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            border: 1px solid #ececec;
+            border-radius: 8px;
+            background: #fff;
+            object-fit: cover;
+        }
+        .cat-name {
+            min-width: 0;
+            flex: 1;
+            line-height: 1.3;
+            overflow-wrap: anywhere;
+        }
+        .category-list-message {
+            padding: 12px 10px;
+            color: #777;
+            font-size: 12px;
+            line-height: 1.45;
+            text-align: center;
         }
         .cat-count {
             margin-left: auto;
@@ -2776,6 +2805,51 @@
             grid-template-columns: 1fr 1fr 0.8fr;
             gap: 12px;
         }
+        .checkout-autocomplete {
+            position: relative;
+        }
+        .checkout-autocomplete-list {
+            display: none;
+            position: absolute;
+            z-index: 80;
+            top: calc(100% + 5px);
+            left: 0;
+            right: 0;
+            max-height: 190px;
+            overflow-y: auto;
+            padding: 5px;
+            border: 1px solid #e1e1e1;
+            border-radius: 10px;
+            background: #fff;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+        }
+        .checkout-autocomplete-list.open { display: block; }
+        .checkout-autocomplete-option {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 10px 11px;
+            border: 0;
+            border-radius: 8px;
+            background: transparent;
+            color: #252525;
+            font: inherit;
+            text-align: left;
+            cursor: pointer;
+        }
+        .checkout-autocomplete-option:hover,
+        .checkout-autocomplete-option:focus {
+            outline: none;
+            background: #fff1eb;
+            color: #d84315;
+        }
+        .checkout-autocomplete-option small {
+            color: #777;
+            font-size: 11px;
+            white-space: nowrap;
+        }
         .checkout-address-type-group { margin-top: 2px; }
         .checkout-address-types {
             display: flex;
@@ -4163,12 +4237,18 @@
                         <div class="checkout-address-grid">
                             <div class="form-group">
                                 <label for="custCity">City <span class="required">*</span></label>
-                                <input type="text" id="custCity" maxlength="80" autocomplete="address-level2" placeholder="City" />
+                                <div class="checkout-autocomplete">
+                                    <input type="text" id="custCity" maxlength="80" autocomplete="off" placeholder="City" onfocus="showCheckoutCitySuggestions(this.value)" oninput="showCheckoutCitySuggestions(this.value)" onchange="applyCheckoutCityMatch(this.value)" aria-autocomplete="list" aria-controls="checkoutCitySuggestions" />
+                                    <div class="checkout-autocomplete-list" id="checkoutCitySuggestions" role="listbox" aria-label="City suggestions"></div>
+                                </div>
                                 <div class="checkout-field-error" id="custCityError"></div>
                             </div>
                             <div class="form-group">
                                 <label for="custState">State <span class="required">*</span></label>
-                                <input type="text" id="custState" maxlength="80" autocomplete="address-level1" placeholder="State" />
+                                <div class="checkout-autocomplete">
+                                    <input type="text" id="custState" maxlength="80" autocomplete="off" placeholder="State" onfocus="showCheckoutStateSuggestions(this.value)" oninput="showCheckoutStateSuggestions(this.value)" onchange="applyCheckoutStateMatch(this.value)" aria-autocomplete="list" aria-controls="checkoutStateSuggestions" />
+                                    <div class="checkout-autocomplete-list" id="checkoutStateSuggestions" role="listbox" aria-label="State suggestions"></div>
+                                </div>
                                 <div class="checkout-field-error" id="custStateError"></div>
                             </div>
                             <div class="form-group">
@@ -4454,6 +4534,11 @@
         let productsCache = [];
         let productRealtimeChannel = null;
         let productReloadTimer = null;
+        let customerCategoriesCache = [];
+        let customerCategoriesLoadState = 'loading';
+        let customerCategoriesLoadedAt = 0;
+        let categoryRealtimeChannel = null;
+        let categoryReloadTimer = null;
 
         function getProducts() {
             return productsCache;
@@ -4507,6 +4592,155 @@
                 availability: row.availability || (stockQty > 0 ? 'in_stock' : 'out_of_stock'),
                 dateAdded: row.dateAdded || row.updatedDate || new Date(0).toISOString()
             };
+        }
+
+        function firstCustomerCategoryValue(row, keys) {
+            for (const key of keys) {
+                const value = row?.[key];
+                if (typeof value === 'string' && value.trim()) return value.trim();
+                if (value && typeof value === 'object') {
+                    const nested = value.publicUrl || value.public_url || value.url || value.path;
+                    if (typeof nested === 'string' && nested.trim()) return nested.trim();
+                }
+            }
+            return '';
+        }
+
+        function customerCategoryIsActive(row) {
+            if (!row || row.deleted_at || row.is_deleted === true) return false;
+            const booleanFlags = ['is_active', 'active', 'enabled', 'is_visible', 'visible'];
+            for (const key of booleanFlags) {
+                if (typeof row[key] === 'boolean') return row[key];
+            }
+            const status = String(row.status ?? row.category_status ?? row.state ?? '').trim().toLowerCase();
+            if (!status) return true;
+            if (['inactive', 'disabled', 'draft', 'archived', 'deleted', 'hidden'].includes(status)) return false;
+            return ['active', 'enabled', 'published', 'visible', 'approved'].includes(status);
+        }
+
+        function resolveCustomerCategoryImage(row) {
+            const rawImage = firstCustomerCategoryValue(row, [
+                'image_url', 'category_image_url', 'category_image', 'image',
+                'icon_url', 'thumbnail_url', 'photo_url', 'picture'
+            ]);
+            if (!rawImage) return '';
+            if (/^(https?:|data:|blob:)/i.test(rawImage)) return rawImage;
+            if (rawImage.startsWith('/storage/')) return SUPABASE_URL.replace(/\/$/, '') + rawImage;
+            const bucket = firstCustomerCategoryValue(row, [
+                'image_bucket', 'bucket_name', 'storage_bucket'
+            ]) || 'category-images';
+            let storagePath = rawImage.replace(/^\/+/, '');
+            if (storagePath.startsWith(bucket + '/')) storagePath = storagePath.slice(bucket.length + 1);
+            try {
+                return supabaseClient.storage.from(bucket).getPublicUrl(storagePath)?.data?.publicUrl || rawImage;
+            } catch (_) {
+                return rawImage;
+            }
+        }
+
+        function mapCustomerCategory(row, sourceIndex, rowIndex) {
+            const name = firstCustomerCategoryValue(row, [
+                'name', 'category_name', 'title', 'category', 'label'
+            ]);
+            if (!name || !customerCategoryIsActive(row)) return null;
+            const displayOrder = productNumber(
+                row.display_order ?? row.sort_order ?? row.position ?? row.order_index ?? row.order,
+                (sourceIndex * 10000) + rowIndex
+            );
+            return {
+                id: String(row.id ?? row.category_id ?? name),
+                name,
+                image: resolveCustomerCategoryImage(row),
+                displayOrder
+            };
+        }
+
+        async function loadCustomerCategoriesFromSupabase({ showErrorToast = false } = {}) {
+            const categoryTables = ['categories', 'product_categories', 'customer_categories'];
+            const [storeSettingsResult, ...tableResults] = await Promise.all([
+                supabaseClient.from('store_settings').select('store_id, settings'),
+                ...categoryTables.map(table => supabaseClient.from(table).select('*'))
+            ]);
+            const successfulResults = tableResults
+                .map((result, index) => ({ ...result, sourceIndex: index + 1, table: categoryTables[index] }))
+                .filter(result => !result.error);
+
+            if (storeSettingsResult.error && !successfulResults.length) {
+                customerCategoriesCache = [];
+                customerCategoriesLoadState = 'error';
+                renderCategoryList(getProducts());
+                console.error('Supabase category load failed:', [
+                    { table: 'store_settings', error: storeSettingsResult.error?.message || 'Unknown error' },
+                    ...tableResults.map((result, index) => ({
+                        table: categoryTables[index], error: result.error?.message || 'Unknown error'
+                    }))
+                ]);
+                if (showErrorToast) showToast('Categories could not be loaded. Check Supabase access.', 'error');
+                return false;
+            }
+
+            let settingsCategoryIndex = 0;
+            const settingsCategories = storeSettingsResult.error ? [] : (storeSettingsResult.data || []).flatMap(settingRow => {
+                const catalog = settingRow?.settings?.catalog;
+                const categories = Array.isArray(catalog?.categories) ? catalog.categories : [];
+                return categories.map(category =>
+                    mapCustomerCategory(category, 0, settingsCategoryIndex++)
+                ).filter(Boolean);
+            });
+            const dedicatedCategories = successfulResults.flatMap(result =>
+                (result.data || []).map((row, rowIndex) =>
+                    mapCustomerCategory(row, result.sourceIndex, rowIndex)
+                ).filter(Boolean)
+            );
+            const mappedCategories = [...settingsCategories, ...dedicatedCategories];
+            const uniqueCategories = new Map();
+            mappedCategories.forEach(category => {
+                const key = category.name.toLocaleLowerCase('en-IN');
+                const existing = uniqueCategories.get(key);
+                if (!existing || (!existing.image && category.image)) {
+                    uniqueCategories.set(key, existing ? { ...existing, ...category } : category);
+                }
+            });
+            customerCategoriesCache = [...uniqueCategories.values()].sort((first, second) =>
+                first.displayOrder - second.displayOrder || first.name.localeCompare(second.name)
+            );
+            customerCategoriesLoadState = 'ready';
+            customerCategoriesLoadedAt = Date.now();
+            const activeCategoryExists = customerCategoriesCache.length
+                ? customerCategoriesCache.some(category =>
+                    category.name.toLocaleLowerCase('en-IN') === activeCategory.toLocaleLowerCase('en-IN')
+                )
+                : getProducts().some(product =>
+                    String(product.category || 'Other').toLocaleLowerCase('en-IN') === activeCategory.toLocaleLowerCase('en-IN')
+                );
+            if (activeCategory !== 'all' && !activeCategoryExists) activeCategory = 'all';
+            applyFilters();
+            return true;
+        }
+
+        function scheduleCustomerCategoriesReload() {
+            window.clearTimeout(categoryReloadTimer);
+            categoryReloadTimer = window.setTimeout(() => {
+                loadCustomerCategoriesFromSupabase({ showErrorToast: false });
+            }, 250);
+        }
+
+        function refreshCustomerCategoriesIfNeeded() {
+            if (Date.now() - customerCategoriesLoadedAt > 10000) {
+                loadCustomerCategoriesFromSupabase({ showErrorToast: false });
+            }
+        }
+
+        function subscribeToCustomerCategoryChanges() {
+            if (categoryRealtimeChannel) return;
+            categoryRealtimeChannel = supabaseClient
+                .channel('customer-category-sync')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'store_settings' }, scheduleCustomerCategoriesReload)
+                .subscribe(status => {
+                    if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT') {
+                        console.error('Supabase category Realtime status:', status);
+                    }
+                });
         }
 
         function showProductsLoading() {
@@ -4673,20 +4907,6 @@
         // =============================================================
         let currentView = 'products';
         let activeCategory = 'all';
-        const DEFAULT_CUSTOMER_CATEGORIES = [
-            'Mobile & Accessories',
-            'Computer & Accessories',
-            'TVs & Appliances',
-            'Fashion',
-            'Home & Kitchen',
-            'Grocery & Food',
-            'Beauty & Personal Care',
-            'Health & Wellness',
-            'Sports & Fitness',
-            'Books',
-            'Toys & Baby Products',
-            'Automotive'
-        ];
         let activePriceRange = 'all';
         let customMinPrice = null;
         let customMaxPrice = null;
@@ -4705,6 +4925,64 @@
             tax: 0,
             grandTotal: 0
         };
+        const CHECKOUT_INDIAN_STATES = Object.freeze([
+            'Andaman and Nicobar Islands', 'Andhra Pradesh', 'Arunachal Pradesh', 'Assam',
+            'Bihar', 'Chandigarh', 'Chhattisgarh', 'Dadra and Nagar Haveli and Daman and Diu',
+            'Delhi', 'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jammu and Kashmir',
+            'Jharkhand', 'Karnataka', 'Kerala', 'Ladakh', 'Lakshadweep', 'Madhya Pradesh',
+            'Maharashtra', 'Manipur', 'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha',
+            'Puducherry', 'Punjab', 'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana',
+            'Tripura', 'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+        ]);
+        const CHECKOUT_CITY_OPTIONS = Object.freeze([
+            ['Chennai', 'Tamil Nadu'], ['Coimbatore', 'Tamil Nadu'], ['Madurai', 'Tamil Nadu'],
+            ['Tiruchirappalli', 'Tamil Nadu'], ['Salem', 'Tamil Nadu'], ['Tirunelveli', 'Tamil Nadu'],
+            ['Tiruppur', 'Tamil Nadu'], ['Erode', 'Tamil Nadu'], ['Vellore', 'Tamil Nadu'],
+            ['Thoothukudi', 'Tamil Nadu'], ['Dindigul', 'Tamil Nadu'], ['Thanjavur', 'Tamil Nadu'],
+            ['Nagercoil', 'Tamil Nadu'], ['Kanchipuram', 'Tamil Nadu'], ['Karur', 'Tamil Nadu'],
+            ['Cuddalore', 'Tamil Nadu'], ['Kumbakonam', 'Tamil Nadu'], ['Sivakasi', 'Tamil Nadu'],
+            ['Namakkal', 'Tamil Nadu'], ['Hosur', 'Tamil Nadu'], ['Krishnagiri', 'Tamil Nadu'],
+            ['Dharmapuri', 'Tamil Nadu'], ['Pollachi', 'Tamil Nadu'], ['Rajapalayam', 'Tamil Nadu'],
+            ['Pudukkottai', 'Tamil Nadu'], ['Ramanathapuram', 'Tamil Nadu'], ['Sivaganga', 'Tamil Nadu'],
+            ['Virudhunagar', 'Tamil Nadu'], ['Tenkasi', 'Tamil Nadu'], ['Ooty', 'Tamil Nadu'],
+            ['Theni', 'Tamil Nadu'], ['Nagapattinam', 'Tamil Nadu'], ['Mayiladuthurai', 'Tamil Nadu'],
+            ['Tiruvannamalai', 'Tamil Nadu'], ['Villupuram', 'Tamil Nadu'], ['Ariyalur', 'Tamil Nadu'],
+            ['Perambalur', 'Tamil Nadu'], ['Bengaluru', 'Karnataka'], ['Mysuru', 'Karnataka'],
+            ['Mangaluru', 'Karnataka'], ['Hubballi', 'Karnataka'], ['Belagavi', 'Karnataka'],
+            ['Shivamogga', 'Karnataka'], ['Kochi', 'Kerala'], ['Thiruvananthapuram', 'Kerala'],
+            ['Kozhikode', 'Kerala'], ['Thrissur', 'Kerala'], ['Kollam', 'Kerala'],
+            ['Kannur', 'Kerala'], ['Hyderabad', 'Telangana'], ['Warangal', 'Telangana'],
+            ['Nizamabad', 'Telangana'], ['Karimnagar', 'Telangana'], ['Visakhapatnam', 'Andhra Pradesh'],
+            ['Vijayawada', 'Andhra Pradesh'], ['Guntur', 'Andhra Pradesh'], ['Tirupati', 'Andhra Pradesh'],
+            ['Nellore', 'Andhra Pradesh'], ['Kurnool', 'Andhra Pradesh'], ['Mumbai', 'Maharashtra'],
+            ['Pune', 'Maharashtra'], ['Nagpur', 'Maharashtra'], ['Nashik', 'Maharashtra'],
+            ['Thane', 'Maharashtra'], ['Aurangabad', 'Maharashtra'], ['Delhi', 'Delhi'],
+            ['New Delhi', 'Delhi'], ['Gurugram', 'Haryana'], ['Faridabad', 'Haryana'],
+            ['Panipat', 'Haryana'], ['Ambala', 'Haryana'], ['Chandigarh', 'Chandigarh'],
+            ['Ludhiana', 'Punjab'], ['Amritsar', 'Punjab'], ['Jalandhar', 'Punjab'],
+            ['Patiala', 'Punjab'], ['Jaipur', 'Rajasthan'], ['Jodhpur', 'Rajasthan'],
+            ['Udaipur', 'Rajasthan'], ['Kota', 'Rajasthan'], ['Ajmer', 'Rajasthan'],
+            ['Ahmedabad', 'Gujarat'], ['Surat', 'Gujarat'], ['Vadodara', 'Gujarat'],
+            ['Rajkot', 'Gujarat'], ['Gandhinagar', 'Gujarat'], ['Bhopal', 'Madhya Pradesh'],
+            ['Indore', 'Madhya Pradesh'], ['Jabalpur', 'Madhya Pradesh'], ['Gwalior', 'Madhya Pradesh'],
+            ['Lucknow', 'Uttar Pradesh'], ['Kanpur', 'Uttar Pradesh'], ['Noida', 'Uttar Pradesh'],
+            ['Agra', 'Uttar Pradesh'], ['Varanasi', 'Uttar Pradesh'], ['Prayagraj', 'Uttar Pradesh'],
+            ['Kolkata', 'West Bengal'], ['Howrah', 'West Bengal'], ['Durgapur', 'West Bengal'],
+            ['Siliguri', 'West Bengal'], ['Bhubaneswar', 'Odisha'], ['Cuttack', 'Odisha'],
+            ['Rourkela', 'Odisha'], ['Patna', 'Bihar'], ['Gaya', 'Bihar'],
+            ['Muzaffarpur', 'Bihar'], ['Ranchi', 'Jharkhand'], ['Jamshedpur', 'Jharkhand'],
+            ['Dhanbad', 'Jharkhand'], ['Raipur', 'Chhattisgarh'], ['Bhilai', 'Chhattisgarh'],
+            ['Bilaspur', 'Chhattisgarh'], ['Guwahati', 'Assam'], ['Dibrugarh', 'Assam'],
+            ['Silchar', 'Assam'], ['Shillong', 'Meghalaya'], ['Agartala', 'Tripura'],
+            ['Imphal', 'Manipur'], ['Aizawl', 'Mizoram'], ['Kohima', 'Nagaland'],
+            ['Itanagar', 'Arunachal Pradesh'], ['Gangtok', 'Sikkim'], ['Dehradun', 'Uttarakhand'],
+            ['Haridwar', 'Uttarakhand'], ['Haldwani', 'Uttarakhand'], ['Shimla', 'Himachal Pradesh'],
+            ['Dharamshala', 'Himachal Pradesh'], ['Srinagar', 'Jammu and Kashmir'],
+            ['Jammu', 'Jammu and Kashmir'], ['Leh', 'Ladakh'], ['Panaji', 'Goa'],
+            ['Margao', 'Goa'], ['Puducherry', 'Puducherry'], ['Port Blair', 'Andaman and Nicobar Islands'],
+            ['Daman', 'Dadra and Nagar Haveli and Daman and Diu'], ['Silvassa', 'Dadra and Nagar Haveli and Daman and Diu'],
+            ['Kavaratti', 'Lakshadweep']
+        ].map(([city, state]) => Object.freeze({ city, state })));
         let wishlist = JSON.parse(localStorage.getItem('favlor_wishlist') || '[]');
         let compareList = JSON.parse(localStorage.getItem('favlor_compare') || '[]');
         let currentProduct = null;
@@ -4907,7 +5185,8 @@
 
             let filtered = products.filter(p => {
                 const cat = p.category || 'Other';
-                return activeCategory === 'all' || cat === activeCategory;
+                return activeCategory === 'all' ||
+                    cat.toLocaleLowerCase('en-IN') === activeCategory.toLocaleLowerCase('en-IN');
             });
 
             if (searchTerm) {
@@ -4997,15 +5276,54 @@
         function renderCategoryList(products) {
             const container = document.getElementById('categoryList');
             const counts = {};
-            products.forEach(p => { const cat = p.category || 'Other';
-                counts[cat] = (counts[cat] || 0) + 1; });
-            let html =
-                `<div class="cat-item ${activeCategory === 'all' ? 'active' : ''}" data-category="all" onclick="selectCategory('all')"><span class="cat-icon"><i class="fas fa-th-list"></i></span> All Categories <span class="cat-count">${products.length}</span></div>`;
-            DEFAULT_CUSTOMER_CATEGORIES.forEach(cat => {
-                html +=
-                    `<div class="cat-item ${activeCategory === cat ? 'active' : ''}" data-category="${escapeHtml(cat)}" onclick="selectCategory('${escapeHtml(cat)}')"><span class="cat-icon"><i class="fas fa-tag"></i></span> ${escapeHtml(cat)} <span class="cat-count">${counts[cat] || 0}</span></div>`;
+            products.forEach(product => {
+                const name = String(product.category || 'Other');
+                const key = name.toLocaleLowerCase('en-IN');
+                counts[key] = (counts[key] || 0) + 1;
             });
+            const productCategories = [];
+            const seenProductCategories = new Set();
+            products.forEach((product, index) => {
+                const name = String(product.category || 'Other').trim() || 'Other';
+                const key = name.toLocaleLowerCase('en-IN');
+                if (seenProductCategories.has(key)) return;
+                seenProductCategories.add(key);
+                productCategories.push({
+                    id: `product-category-${index}`,
+                    name,
+                    image: '',
+                    displayOrder: index
+                });
+            });
+            // Admin categories (and their images) are preferred. If the Admin
+            // category list has not been synced yet, derive the menu from the
+            // categories already assigned to visible products.
+            const displayedCategories = customerCategoriesCache.length
+                ? customerCategoriesCache
+                : productCategories;
+            let html =
+                `<div class="cat-item ${activeCategory === 'all' ? 'active' : ''}" data-category="all"><span class="cat-icon"><i class="fas fa-th-list"></i></span><span class="cat-name">All Categories</span><span class="cat-count">${products.length}</span></div>`;
+
+            if (!displayedCategories.length && customerCategoriesLoadState === 'loading') {
+                html += '<div class="category-list-message"><i class="fas fa-spinner fa-spin"></i> Loading categories...</div>';
+            } else if (!displayedCategories.length && customerCategoriesLoadState === 'error') {
+                html += '<div class="category-list-message">Categories could not be loaded.</div>';
+            } else if (!displayedCategories.length) {
+                html += '<div class="category-list-message">No categories added by Admin.</div>';
+            } else {
+                displayedCategories.forEach(category => {
+                    const isActive = activeCategory !== 'all' &&
+                        activeCategory.toLocaleLowerCase('en-IN') === category.name.toLocaleLowerCase('en-IN');
+                    const icon = category.image
+                        ? `<span class="cat-icon"><img src="${escapeHtml(category.image)}" alt="${escapeHtml(category.name)}" onerror="this.hidden=true;this.nextElementSibling.hidden=false" /><i class="fas fa-tag" hidden></i></span>`
+                        : '<span class="cat-icon"><i class="fas fa-tag"></i></span>';
+                    html += `<div class="cat-item ${isActive ? 'active' : ''}" data-category="${escapeHtml(category.name)}">${icon}<span class="cat-name">${escapeHtml(category.name)}</span><span class="cat-count">${counts[category.name.toLocaleLowerCase('en-IN')] || 0}</span></div>`;
+                });
+            }
             container.innerHTML = html;
+            container.querySelectorAll('.cat-item[data-category]').forEach(item => {
+                item.addEventListener('click', () => selectCategory(item.dataset.category));
+            });
         }
 
         function selectCategory(category) {
@@ -5026,6 +5344,7 @@
             const dropdown = document.getElementById('categoryDropdown');
             const button = document.getElementById('categoryMenuBtn');
             const willOpen = !dropdown.classList.contains('open');
+            if (willOpen) refreshCustomerCategoriesIfNeeded();
             dropdown.classList.toggle('open', willOpen);
             button.classList.toggle('active', willOpen);
             button.setAttribute('aria-expanded', String(willOpen));
@@ -5275,6 +5594,130 @@
             openCheckoutForm(directCheckoutItems);
             return true;
         }
+
+        function normalizeCheckoutLocationValue(value) {
+            return String(value || '').trim().toLocaleLowerCase('en-IN');
+        }
+
+        function getCanonicalCheckoutState(value) {
+            const normalized = normalizeCheckoutLocationValue(value);
+            return CHECKOUT_INDIAN_STATES.find(state =>
+                normalizeCheckoutLocationValue(state) === normalized
+            ) || '';
+        }
+
+        function clearCheckoutLocationError(inputId) {
+            const input = document.getElementById(inputId);
+            input?.classList.remove('checkout-invalid');
+            const error = document.getElementById(inputId + 'Error');
+            if (error) error.textContent = '';
+        }
+
+        function renderCheckoutLocationSuggestions(listId, items, selectItem) {
+            const list = document.getElementById(listId);
+            if (!list) return;
+            list.replaceChildren();
+            if (!items.length) {
+                list.classList.remove('open');
+                return;
+            }
+            items.forEach(item => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'checkout-autocomplete-option';
+                button.setAttribute('role', 'option');
+                const name = document.createElement('span');
+                name.textContent = item.name;
+                button.appendChild(name);
+                if (item.detail) {
+                    const detail = document.createElement('small');
+                    detail.textContent = item.detail;
+                    button.appendChild(detail);
+                }
+                button.addEventListener('mousedown', event => event.preventDefault());
+                button.addEventListener('click', () => selectItem(item));
+                list.appendChild(button);
+            });
+            list.classList.add('open');
+        }
+
+        function closeCheckoutLocationSuggestions(listId = '') {
+            const lists = listId
+                ? [document.getElementById(listId)]
+                : document.querySelectorAll('.checkout-autocomplete-list');
+            lists.forEach(list => list?.classList.remove('open'));
+        }
+
+        function showCheckoutStateSuggestions(value = '') {
+            clearCheckoutLocationError('custState');
+            const query = normalizeCheckoutLocationValue(value);
+            const matches = CHECKOUT_INDIAN_STATES
+                .filter(state => !query || normalizeCheckoutLocationValue(state).includes(query))
+                .sort((first, second) => {
+                    const firstStarts = normalizeCheckoutLocationValue(first).startsWith(query);
+                    const secondStarts = normalizeCheckoutLocationValue(second).startsWith(query);
+                    return Number(secondStarts) - Number(firstStarts) || first.localeCompare(second);
+                })
+                .slice(0, 12)
+                .map(state => ({ name: state, detail: '' }));
+            renderCheckoutLocationSuggestions('checkoutStateSuggestions', matches, item => {
+                document.getElementById('custState').value = item.name;
+                clearCheckoutLocationError('custState');
+                closeCheckoutLocationSuggestions('checkoutStateSuggestions');
+            });
+        }
+
+        function showCheckoutCitySuggestions(value = '') {
+            clearCheckoutLocationError('custCity');
+            const query = normalizeCheckoutLocationValue(value);
+            const selectedState = getCanonicalCheckoutState(document.getElementById('custState')?.value);
+            const matches = CHECKOUT_CITY_OPTIONS
+                .filter(item => !selectedState || item.state === selectedState)
+                .filter(item => !query || normalizeCheckoutLocationValue(item.city).includes(query))
+                .sort((first, second) => {
+                    const firstStarts = normalizeCheckoutLocationValue(first.city).startsWith(query);
+                    const secondStarts = normalizeCheckoutLocationValue(second.city).startsWith(query);
+                    return Number(secondStarts) - Number(firstStarts) || first.city.localeCompare(second.city);
+                })
+                .slice(0, 12)
+                .map(item => ({ name: item.city, detail: item.state, state: item.state }));
+            renderCheckoutLocationSuggestions('checkoutCitySuggestions', matches, item => {
+                document.getElementById('custCity').value = item.name;
+                document.getElementById('custState').value = item.state;
+                clearCheckoutLocationError('custCity');
+                clearCheckoutLocationError('custState');
+                closeCheckoutLocationSuggestions();
+            });
+        }
+
+        function applyCheckoutStateMatch(value) {
+            const canonicalState = getCanonicalCheckoutState(value);
+            if (canonicalState) document.getElementById('custState').value = canonicalState;
+            closeCheckoutLocationSuggestions('checkoutStateSuggestions');
+        }
+
+        function applyCheckoutCityMatch(value) {
+            const normalized = normalizeCheckoutLocationValue(value);
+            const selectedState = getCanonicalCheckoutState(document.getElementById('custState')?.value);
+            const exactMatch = CHECKOUT_CITY_OPTIONS.find(item =>
+                normalizeCheckoutLocationValue(item.city) === normalized &&
+                (!selectedState || item.state === selectedState)
+            ) || CHECKOUT_CITY_OPTIONS.find(item =>
+                normalizeCheckoutLocationValue(item.city) === normalized
+            );
+            if (exactMatch) {
+                document.getElementById('custCity').value = exactMatch.city;
+                document.getElementById('custState').value = exactMatch.state;
+                clearCheckoutLocationError('custState');
+            }
+            closeCheckoutLocationSuggestions('checkoutCitySuggestions');
+        }
+
+        document.addEventListener('click', event => {
+            if (!event.target.closest('.checkout-autocomplete')) {
+                closeCheckoutLocationSuggestions();
+            }
+        });
 
         function normalizeCheckoutPhone(value) {
             const digits = String(value || '').replace(/\D/g, '');
@@ -6602,42 +7045,8 @@
                 ...(product || {}),
                 ...((joinedBenefits && typeof joinedBenefits === 'object') ? joinedBenefits : {})
             };
-
-            const items = [];
-
-            if (productServiceSwitch(benefits.free_delivery)) {
-                items.push('Free Delivery');
-            }
-
-            if (productServiceSwitch(benefits.secure_payment)) {
-                items.push('Secure Payment');
-            }
-
-            if (productServiceSwitch(benefits.cash_on_delivery)) {
-                items.push('Cash on Delivery');
-            }
-
-            if (productServiceSwitch(benefits.replacement_enabled)) {
-                items.push(`${benefits.replacement_days || 7} Day Replacement`);
-            } else if (productServiceSwitch(benefits.return_enabled)) {
-                items.push(`${benefits.return_days || 7} Day Return`);
-            }
-
-            if (productServiceSwitch(benefits.warranty_enabled ?? benefits.warranty_available)) {
-                items.push(benefits.warranty_text || 'Warranty Available');
-            }
-
-            const list = document.getElementById('product-benefits-list');
-            const section = document.getElementById('productBenefitsServices');
-            if (!list || !section) return;
-
-            list.innerHTML = items.map(item => `
-                <div class="benefit-item product-benefit-service-item">
-                    <i class="fas fa-shield-alt"></i>
-                    <strong>${escapeHtml(item)}</strong>
-                </div>
-            `).join('');
-            section.hidden = !items.length;
+            // Use the shared renderer so every benefit gets its own matching icon.
+            renderProductBenefitsServices(benefits);
         }
 
         function productColorCss(color) {
@@ -7295,7 +7704,10 @@
         updateOrderBadge();
         switchView('products');
         showProductsLoading();
+        renderCategoryList(getProducts());
         subscribeToProductChanges();
+        subscribeToCustomerCategoryChanges();
+        loadCustomerCategoriesFromSupabase({ showErrorToast: false });
         loadProductsFromSupabase();
 
         // Welcome toast
