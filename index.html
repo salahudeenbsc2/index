@@ -5445,71 +5445,36 @@
                 product => String(product.id) === String(selectedProductId)
             ) || null;
 
-            // Load the selected product and its Benefits & Services together.
-            // This is the relation query used when a Supabase foreign-key
-            // relationship is available for product_benefits_services.
-            const { data: product, error } = await supabaseClient
+            const { data: productRow, error: productError } = await supabaseClient
                 .from('products')
-                .select(`
-                    *,
-                    product_benefits_services (
-                        free_delivery,
-                        return_enabled,
-                        return_days,
-                        secure_payment,
-                        cash_on_delivery,
-                        warranty_enabled,
-                        warranty_text,
-                        replacement_enabled,
-                        replacement_days
-                    )
-                `)
-                .eq('id', selectedProductId)
-                .single();
-
-            if (!error && product) {
-                const relation = Array.isArray(product.product_benefits_services)
-                    ? product.product_benefits_services[0]
-                    : product.product_benefits_services;
-                return mapCustomerProduct({
-                    ...(cachedProduct || {}),
-                    ...product,
-                    ...(relation || {})
-                });
-            }
-
-            // Existing databases may use text product_id without a foreign key.
-            // In that case, fetch the same row directly so Product ID 2 still
-            // matches product_benefits_services.product_id = '2'.
-            const { data: benefits, error: benefitsError } = await supabaseClient
-                .from('product_benefits_services')
-                .select(`
-                    product_id,
-                    free_delivery,
-                    return_enabled,
-                    return_days,
-                    secure_payment,
-                    cash_on_delivery,
-                    warranty_enabled,
-                    warranty_text,
-                    replacement_enabled,
-                    replacement_days
-                `)
-                .eq('product_id', String(selectedProductId))
+                .select('*')
+                .eq('id', Number(selectedProductId))
                 .maybeSingle();
 
-            if (benefitsError) {
-                console.error('Selected product Benefits & Services load failed:', benefitsError);
-                return cachedProduct;
+            if (productError) {
+                console.error('Selected product load failed:', productError);
+            }
+            const product = productRow || cachedProduct;
+            if (!product) return null;
+
+            // Always fetch Benefits directly with the selected product ID.
+            // Number(product.id) also works with the compatible text product_id column.
+            const { data: benefits, error } = await supabaseClient
+                .from('product_benefits_services')
+                .select('*')
+                .eq('product_id', Number(product.id))
+                .maybeSingle();
+
+            if (error) {
+                console.error('Selected product Benefits & Services load failed:', error);
             }
 
-            return cachedProduct
-                ? mapCustomerProduct({
-                    ...cachedProduct,
-                    product_benefits_services: benefits ? [benefits] : [],
-                    ...(benefits || {})
-                })
-                : null;
+            return mapCustomerProduct({
+                ...(cachedProduct || {}),
+                ...product,
+                product_benefits_services: benefits ? [benefits] : [],
+                ...(benefits || {})
+            });
         }
 
         function removeItemFromCart(id) {
@@ -7033,6 +6998,54 @@
             section.hidden = !items.length;
         }
 
+        function renderDirectProductBenefits(benefits) {
+            const items = [];
+
+            if (benefits?.free_delivery) {
+                items.push({ label: 'Free Delivery', icon: 'fa-truck' });
+            }
+
+            if (benefits?.return_enabled) {
+                items.push({
+                    label: `${Number(benefits.return_days) || 7} Day Return`,
+                    icon: 'fa-undo-alt'
+                });
+            }
+
+            if (benefits?.replacement_enabled) {
+                items.push({
+                    label: `${Number(benefits.replacement_days) || 7} Day Replacement`,
+                    icon: 'fa-exchange-alt'
+                });
+            }
+
+            if (benefits?.warranty_enabled) {
+                items.push({
+                    label: benefits.warranty_text || 'Warranty Available',
+                    icon: 'fa-certificate'
+                });
+            }
+
+            if (benefits?.secure_payment) {
+                items.push({ label: 'Secure Payment', icon: 'fa-shield-alt' });
+            }
+
+            if (benefits?.cash_on_delivery) {
+                items.push({ label: 'Cash on Delivery', icon: 'fa-money-bill-wave' });
+            }
+
+            const section = document.getElementById('productBenefitsServices');
+            const grid = document.getElementById('product-benefits-list');
+            if (!section || !grid) return;
+            grid.innerHTML = items.map(item => `
+                <div class="product-benefit-service-item">
+                    <i class="fas ${item.icon}" aria-hidden="true"></i>
+                    <span><strong>${escapeHtml(item.label)}</strong></span>
+                </div>
+            `).join('');
+            section.hidden = !items.length;
+        }
+
         function renderJoinedProductBenefits(product) {
             const joinedValue = product?.product_benefits_services;
             const joinedBenefits = Array.isArray(joinedValue)
@@ -7045,8 +7058,7 @@
                 ...(product || {}),
                 ...((joinedBenefits && typeof joinedBenefits === 'object') ? joinedBenefits : {})
             };
-            // Use the shared renderer so every benefit gets its own matching icon.
-            renderProductBenefitsServices(benefits);
+            renderDirectProductBenefits(benefits);
         }
 
         function productColorCss(color) {
