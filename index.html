@@ -8617,6 +8617,97 @@
         showToast(exists ? 'Removed from Compare' : 'Added to Compare', 'success');
     };
 
+    function normalizeCheckoutProductName(value) {
+        return String(value || '').trim().toLocaleLowerCase('en-IN');
+    }
+
+    async function preparePlaceOrderItems(items) {
+        const requestedItems = (Array.isArray(items) ? items : []).map(item => ({
+            ...item,
+            id: Number(item?.id),
+            quantity: Math.floor(Number(item?.quantity))
+        }));
+        if (!requestedItems.length) throw new Error('Cart is empty.');
+        if (requestedItems.some(item => !Number.isSafeInteger(item.id) || item.id < 1 ||
+            !Number.isSafeInteger(item.quantity) || item.quantity < 1)) {
+            throw new Error('A cart item is invalid. Remove it and add the product again.');
+        }
+
+        const { data, error } = await supabaseClient
+            .from('customer_products')
+            .select('*');
+        if (error) {
+            console.error('Checkout product validation error:', error);
+            throw new Error('Unable to verify the cart products. Please refresh and try again.');
+        }
+
+        const liveProducts = (data || []).map(row => mapCustomerProduct(row));
+        const liveById = new Map(liveProducts.map(product => [Number(product.id), product]));
+        const resolvedItems = [];
+        let refreshedProductId = false;
+
+        requestedItems.forEach(item => {
+            let product = liveById.get(item.id);
+            if (!product) {
+                const itemName = normalizeCheckoutProductName(item.name);
+                let nameMatches = itemName
+                    ? liveProducts.filter(candidate => normalizeCheckoutProductName(candidate.name) === itemName)
+                    : [];
+                if (item.storeId) {
+                    const sameStoreMatches = nameMatches.filter(candidate =>
+                        String(candidate.storeId || '') === String(item.storeId)
+                    );
+                    if (sameStoreMatches.length) nameMatches = sameStoreMatches;
+                }
+                if (nameMatches.length === 1) {
+                    product = nameMatches[0];
+                    refreshedProductId = refreshedProductId || Number(product.id) !== item.id;
+                }
+            }
+
+            const itemName = product?.name || item.name || `Product ${item.id}`;
+            if (!product) {
+                throw new Error(`${itemName} is no longer available. Remove it from the cart and add it again.`);
+            }
+            if (!product.storeId) {
+                throw new Error(`${itemName} is not assigned to a store. Please contact the store.`);
+            }
+            if (String(product.status || 'Active').trim().toLowerCase() !== 'active' ||
+                productAvailability(product) === 'out_of_stock') {
+                throw new Error(`${itemName} is currently unavailable.`);
+            }
+
+            resolvedItems.push({
+                product_id: Number(product.id),
+                quantity: item.quantity,
+                name: itemName,
+                stock: Math.max(0, Number(product.stockQty ?? product.stock ?? 0))
+            });
+        });
+
+        const combinedItems = new Map();
+        resolvedItems.forEach(item => {
+            const existing = combinedItems.get(item.product_id);
+            if (existing) existing.quantity += item.quantity;
+            else combinedItems.set(item.product_id, { ...item });
+        });
+        const orderItems = [...combinedItems.values()];
+        orderItems.forEach(item => {
+            if (item.stock < item.quantity) {
+                if (item.stock < 1) throw new Error(`${item.name} is out of stock.`);
+                throw new Error(`Only ${item.stock} item(s) of ${item.name} are available.`);
+            }
+        });
+
+        if (refreshedProductId) {
+            showToast('Cart product details refreshed before placing the order.', 'success');
+        }
+        return orderItems.map(item => ({
+            product_id: item.product_id,
+            quantity: item.quantity
+        }));
+    }
+
     window.placeOrder = async function (event) {
         event.preventDefault();
         if (checkoutOrderSubmissionInProgress) return;
@@ -8630,6 +8721,7 @@
         try {
             const context = await requireCustomerLogin();
             if (!context) return;
+            const verifiedOrderItems = await preparePlaceOrderItems(details.items);
             const { data, error } = await supabaseClient.rpc('place_customer_order', {
                 p_customer_name: details.name,
                 p_customer_email: details.email,
@@ -8637,10 +8729,7 @@
                 p_shipping_address: details.shippingAddress,
                 p_notes: details.notes || '',
                 p_payment_method: details.paymentMethod,
-                p_items: details.items.map(item => ({
-                    product_id: Number(item.id),
-                    quantity: Number(item.quantity)
-                }))
+                p_items: verifiedOrderItems
             });
             if (error) throw error;
 
