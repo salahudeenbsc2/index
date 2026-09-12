@@ -2236,6 +2236,11 @@
             border-color: #bf360c;
             box-shadow: 0 0 0 3px rgba(232, 81, 27, 0.14);
         }
+        .modal-quantity-stock {
+            color: #777;
+            font-size: 12px;
+            font-weight: 600;
+        }
         .modal-action-row {
             display: grid;
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -4121,6 +4126,7 @@
                         <option value="1">1</option>
                     </select>
                 </div>
+                <span class="modal-quantity-stock" id="modalQuantityStock"></span>
             </div>
             <div class="modal-color-section" id="modalColorSection" hidden>
                 <div class="modal-color-title"><i class="fas fa-palette"></i> Available Colors: <span class="modal-selected-color" id="modalSelectedColor"></span></div>
@@ -7128,6 +7134,7 @@
             const stockLimit = getProductStockLimit(product);
             const section = document.getElementById('modalQuantitySection');
             const quantitySelect = document.getElementById('modalQuantity');
+            const stockText = document.getElementById('modalQuantityStock');
             section.hidden = stockLimit === 0;
             const optionLimit = Math.min(3, stockLimit === 999 ? 3 : stockLimit);
             quantitySelect.innerHTML = Array.from(
@@ -7135,6 +7142,7 @@
                 (_, index) => `<option value="${index + 1}">${index + 1}</option>`
             ).join('');
             quantitySelect.value = '1';
+            stockText.textContent = stockLimit > 0 && stockLimit < 999 ? `${stockLimit} available` : '';
         }
 
         function setModalQuantity(value) {
