@@ -182,7 +182,7 @@
     document.querySelectorAll(".page-action").forEach(b=>b.addEventListener("click",()=>alert(b.dataset.message)));
     document.querySelectorAll(".approval-btn").forEach(b=>b.addEventListener("click",()=>{const row=b.closest("tr"),status=row.querySelector(".approval-status");status.textContent=b.dataset.status;status.className="badge approval-status "+(b.dataset.status==="Approved"?"green":"red");row.querySelectorAll(".approval-btn").forEach(x=>x.disabled=true)}));
     document.getElementById("settingsForm").addEventListener("submit",e=>{e.preventDefault();message("settingsMsg","Settings saved successfully.","ok")});
-    document.getElementById("addAdminBtn").addEventListener("click",()=>alert("New Administrator form can be connected to Supabase securely."));
+    document.getElementById("addAdminBtn").addEventListener("click",()=>{const btn=document.getElementById("amAdd");if(btn){btn.click()}else{alert("Administrator form is still loading. Please try again.")}});
     document.getElementById("customerUpload").addEventListener("click",()=>{const f=document.getElementById("customerFile");document.getElementById("uploadMessage").textContent=f.files.length?`${f.files[0].name} uploaded successfully.`:"Please choose a document first."});
   </script>
 
@@ -776,7 +776,7 @@ async function api(action,payload={}){
   }catch(ex){
     const msg=String(ex?.message||ex);
     if(msg.includes('Failed to send a request to the Edge Function')){
-      throw Error('Admin Management backend is not reachable. First deploy the EXACT 'admin-management' Edge Function to Supabase project jttuwcqdtbrlowghktar, then refresh this page. If it is already ACTIVE, open that function's Logs/Invocations and check the latest request error.');
+      throw Error('Admin Management service is unavailable. The portal is connected to Supabase, but the admin-management Edge Function is not responding. Deploy/redeploy the matching admin-management function, then click Retry.');
     }
     throw ex;
   }
