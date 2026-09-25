@@ -776,7 +776,7 @@ async function api(action,payload={}){
   }catch(ex){
     const msg=String(ex?.message||ex);
     if(msg.includes('Failed to send a request to the Edge Function')){
-      throw Error('Admin Management backend request failed. The admin-management Edge Function must be deployed in Supabase project jttuwcqdtbrlowghktar. After deployment, refresh this page and try again.');
+      throw Error('Admin Management backend is not reachable. First deploy the EXACT 'admin-management' Edge Function to Supabase project jttuwcqdtbrlowghktar, then refresh this page. If it is already ACTIVE, open that function's Logs/Invocations and check the latest request error.');
     }
     throw ex;
   }
