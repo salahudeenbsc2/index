@@ -720,7 +720,7 @@ const header=document.createElement('div');header.className='sa-header';header.i
 header.querySelector('#saBell').onclick=()=>{const n=header.querySelector('#vcNotices');n.hidden=!n.hidden;n.innerHTML=notices();header.querySelector('#saBell').setAttribute('aria-expanded',String(!n.hidden))};header.querySelector('#saProfile').onclick=()=>{const n=header.querySelector('#saProfileMenu');n.hidden=!n.hidden;header.querySelector('#saProfile').setAttribute('aria-expanded',String(!n.hidden))};
 header.querySelector('#saProfileMenu').onclick=e=>{header.querySelector('#saProfileMenu').hidden=true;if(e.target.dataset.profile==='profile')modal('My Profile','<p>'+E(user?.email)+'</p><p>Super Administrator</p>');if(e.target.dataset.profile==='password'){modal('Change Password','<form>'+field('New password','password','','password','required minlength="12"')+field('Confirm password','confirm','','password','required minlength="12"')+'<p role="status"></p><button class="action">Update Password</button></form>');dialog.querySelector('form').onsubmit=async e=>{e.preventDefault();const f=e.target;if(f.elements.password.value!==f.elements.confirm.value){f.querySelector('p').textContent='Passwords must match';return}const r=await supabaseClient.auth.updateUser({password:f.elements.password.value});f.querySelector('p').textContent=r.error?r.error.message:'Password updated';if(!r.error)f.reset()}}};
 document.addEventListener('click',e=>{if(!header.contains(e.target)){header.querySelectorAll('.sa-pop').forEach(n=>n.hidden=true);header.querySelectorAll('[aria-expanded]').forEach(n=>n.setAttribute('aria-expanded','false'))}});
-new MutationObserver(async()=>{const on=portal.classList.contains('show');if(on&&!running){running=true;user=(await supabaseClient.auth.getUser()).data.user;header.querySelector('#vcName').textContent=user?.email||'My Account';if(portal.classList.contains('super-admin'))route('Dashboard');else root.classList.remove('active');await sync();try{const r=await supabaseClient.functions.invoke('admin-management',{body:{action:'list'}});if(r.data?.ok){adminCount=r.data.admins.length;render()}}catch{}}else if(!on&&running){running=false;payRequest++;payBusy=false;payRows=[];payCustomers=[];paySettings=null;payLoaded=false;payError='';payDetail='';payFilters={};caRequest++;caBusy=false;caRows=[];caLoaded=false;caError='';docs=[];logs=[];customers=[];connected=false;selected.clear();dialog.close();header.querySelectorAll('.sa-pop').forEach(n=>n.hidden=true)}}).observe(portal,{attributes:true,attributeFilter:['class']});
+new MutationObserver(async()=>{const on=portal.classList.contains('show');if(on&&!running){running=true;user=(await supabaseClient.auth.getUser()).data.user;header.querySelector('#vcName').textContent=user?.email||'My Account';if(portal.classList.contains('super-admin'))route('Dashboard');else root.classList.remove('active');await sync();try{const r=await supabaseClient.functions.invoke('Admin-management-index-ts',{body:{action:'list'}});if(r.data?.ok){adminCount=r.data.admins.length;render()}}catch{}}else if(!on&&running){running=false;payRequest++;payBusy=false;payRows=[];payCustomers=[];paySettings=null;payLoaded=false;payError='';payDetail='';payFilters={};caRequest++;caBusy=false;caRows=[];caLoaded=false;caError='';docs=[];logs=[];customers=[];connected=false;selected.clear();dialog.close();header.querySelectorAll('.sa-pop').forEach(n=>n.hidden=true)}}).observe(portal,{attributes:true,attributeFilter:['class']});
 setInterval(()=>{if(running&&!dialog.open&&!document.hidden&&!root.querySelector('input:focus,select:focus'))sync()},20000);
 })();
 </script>
@@ -757,14 +757,14 @@ const list=rows.filter(a=>[a.full_name,a.admin_id,a.email,a.phone].some(v=>Strin
 panel.querySelector('#amRows').innerHTML=list.length?list.map(a=>'<tr>'+[esc(a.admin_id||'Not assigned'),esc(a.full_name||'Name not set'),esc(a.email||'Email unavailable'),esc(a.phone||'Not set'),esc(roleLabel(a.role)),esc(a.department||'Not assigned'),esc(stamp(a.last_login)),esc(a.created_at?new Date(a.created_at).toLocaleDateString():'Not available'),'<span class="am-status am-'+a.status.replace(/\s/g,'')+'">'+esc(a.status)+'</span>','<div class="am-menu">'+actions(a)+'</div>'].map((v,i)=>'<td data-label="'+['Admin ID','Name','Email','Phone Number','Role','Assigned Department','Last Login','Created Date','Status','Action'][i]+'">'+v+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="10" style="text-align:center;padding:35px">No administrators match these filters.</td></tr>';
 }
 async function api(action,payload={}){
-  const functionName='admin-management';
+  const functionName='Admin-management-index-ts';
   try{
     const {data,error}=await supabaseClient.functions.invoke(functionName,{body:{action,...payload}});
     if(error){
       let detail='';
       const status=error.context?.status;
       try{const body=await error.context.clone().json();detail=body.error||body.message||body.msg||''}catch{}
-      if(status===404)throw Error('Admin Management Edge Function was not found (404). In Supabase Dashboard, open Edge Functions and deploy/redeploy the function named admin-management in project jttuwcqdtbrlowghktar.');
+      if(status===404)throw Error('Admin Management Edge Function was not found (404). In Supabase Dashboard, open Edge Functions and deploy/redeploy the function endpoint named Admin-management-index-ts in project jttuwcqdtbrlowghktar.');
       if(status===401)throw Error(detail||'Admin Management rejected the current session (401). Sign in again and verify Edge Function authentication.');
       if(status===403)throw Error(detail||'Only Super Admin is allowed to manage administrator accounts (403).');
       if(status===500)throw Error(detail||'Admin Management Edge Function returned a server error (500). Open the Edge Function Logs in Supabase and check the failing request.');
@@ -776,7 +776,7 @@ async function api(action,payload={}){
   }catch(ex){
     const msg=String(ex?.message||ex);
     if(msg.includes('Failed to send a request to the Edge Function')){
-      throw Error('Admin Management service is unavailable. The portal is connected to Supabase, but the admin-management Edge Function is not responding. Deploy/redeploy the matching admin-management function, then click Retry.');
+      throw Error('Admin Management service is unavailable. The portal is connected to Supabase, but the Admin-management-index-ts Edge Function is not responding. Deploy/redeploy the matching Admin-management-index-ts function, then click Retry.');
     }
     throw ex;
   }
@@ -791,7 +791,7 @@ f.onsubmit=async e=>{e.preventDefault();const fd=new FormData(f),out=f.querySele
 }
 panel.querySelector('#amAdd').onclick=()=>edit();
 // Keep the UI usable when the backend function is temporarily unavailable; the server remains the source of truth.
-const amServiceHint=document.createElement('p');amServiceHint.className='am-info';amServiceHint.id='amServiceHint';amServiceHint.textContent='Administrator changes are saved through the Supabase admin-management service.';panel.prepend(amServiceHint);
+const amServiceHint=document.createElement('p');amServiceHint.className='am-info';amServiceHint.id='amServiceHint';amServiceHint.textContent='Administrator changes are saved through the Supabase Admin-management-index-ts service.';panel.prepend(amServiceHint);
 panel.querySelector('#amRows').onchange=async e=>{const s=e.target,a=rows.find(x=>x.user_id===s.dataset.id),action=s.value;s.value='';if(!a)return;if(action==='delete'&&a.user_id===current?.id){showDialog('Account protected','<p>You cannot delete your own account.</p>');return}if(protectedAccount(a)&&!['view','password'].includes(action))return;
 if(action==='view'){showDialog('Administrator Profile','<dl>'+Object.entries({'Admin ID':a.admin_id||'Not assigned',Name:a.full_name,Email:a.email,Phone:a.phone||'Not set',Role:roleLabel(a.role),Department:a.department||'Not assigned',Status:a.status,'Last Login':stamp(a.last_login),'Created Date':stamp(a.created_at),'Password Change Required':a.force_password_change?'Yes':'No'}).map(([k,v])=>'<dt>'+k+'</dt><dd>'+esc(v)+'</dd>').join('')+'</dl>');return}
 if(['edit','role','department'].includes(action)){edit(a,action);return}
