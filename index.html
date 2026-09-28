@@ -35,7 +35,7 @@
     .compliance-score{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
     .compliance-score strong{font-size:28px;color:#102d45}
     .progress-track{height:9px;background:#e9eff3;border-radius:20px;overflow:hidden}
-    .progress-fill{height:100%;width:82%;background:#c89925;border-radius:20px}
+    .progress-fill{height:100%;width:0%;background:#c89925;border-radius:20px}
     .activity{padding:18px 20px}.activity-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #edf1f4}.activity-item:last-child{border:0}.activity-dot{width:9px;height:9px;background:#c89925;border-radius:50%;margin-top:5px}.activity p{font-size:13px}.activity small{color:#7b8994}.upload-area{border:2px dashed #cad6df;border-radius:13px;margin:20px;padding:35px;text-align:center;background:#f9fbfc}.upload-area input{margin:16px auto;display:block}.mobile-overlay{display:none}
     @keyframes show{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
     @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:1fr}}
@@ -115,12 +115,12 @@
 
      <div class="stats">
       <div class="stat"><div class="stat-head">Total Documents <span class="stat-icon">▤</span></div><strong>0</strong><small>Total number of documents</small></div>
-      <div class="stat"><div class="stat-head">AI Systems <span class="stat-icon">◈</span></div><strong>12</strong><small>Registered AI systems</small></div>
-      <div class="stat"><div class="stat-head">Pending Approvals <span class="stat-icon">✓</span></div><strong>8</strong><small>Approval workflow status</small></div>
-      <div class="stat"><div class="stat-head">Compliance Score <span class="stat-icon">%</span></div><strong>82%</strong><small>Current compliance status</small></div>
-      <div class="stat"><div class="stat-head">Open Risks <span class="stat-icon">!</span></div><strong>27</strong><small>Active risks</small></div>
-      <div class="stat"><div class="stat-head">Open Findings <span class="stat-icon">⚑</span></div><strong>1</strong><small>Audit/nonconformity findings</small></div>
-      <div class="stat"><div class="stat-head">Expiring Soon <span class="stat-icon">◷</span></div><strong>3</strong><small>Documents/certifications nearing expiry</small></div>
+      <div class="stat"><div class="stat-head">AI Systems <span class="stat-icon">◈</span></div><strong>0</strong><small>Registered AI systems</small></div>
+      <div class="stat"><div class="stat-head">Pending Approvals <span class="stat-icon">✓</span></div><strong>0</strong><small>Approval workflow status</small></div>
+      <div class="stat"><div class="stat-head">Compliance Score <span class="stat-icon">%</span></div><strong>0%</strong><small>Current compliance status</small></div>
+      <div class="stat"><div class="stat-head">Open Risks <span class="stat-icon">!</span></div><strong>0</strong><small>Active risks</small></div>
+      <div class="stat"><div class="stat-head">Open Findings <span class="stat-icon">⚑</span></div><strong>0</strong><small>Audit/nonconformity findings</small></div>
+      <div class="stat"><div class="stat-head">Expiring Soon <span class="stat-icon">◷</span></div><strong>0</strong><small>Documents/certifications nearing expiry</small></div>
       <div class="stat"><div class="stat-head">Active Users <span class="stat-icon">♙</span></div><strong>0</strong><small>Organization users</small></div>
      </div>
 
@@ -128,44 +128,35 @@
       <div class="panel">
        <div class="panel-head"><h3>Recent Documents</h3><button class="link" data-open-view="adminDocs">View all</button></div>
        <div class="table-wrap"><table><thead><tr><th>Document</th><th>Category</th><th>Owner</th><th>Status</th><th>Updated</th><th>Action</th></tr></thead>
-       <tbody>
-        <tr><td class="doc-cell"><span class="file-icon">PDF</span>AI Policy.pdf</td><td>AI Governance</td><td>Admin</td><td><span class="badge green">Approved</span></td><td>5 min ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
-        <tr><td class="doc-cell"><span class="file-icon">PDF</span>Risk Assessment</td><td>Risk Management</td><td>Manager</td><td><span class="badge amber">Under Review</span></td><td>20 min ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
-        <tr><td class="doc-cell"><span class="file-icon">PDF</span>Compliance Evidence</td><td>Evidence</td><td>CISO</td><td><span class="badge blue">Draft</span></td><td>2 hrs ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
-       </tbody></table></div>
+       <tbody><tr><td colspan="6" style="text-align:center;color:#71808d;padding:34px">No documents available.</td></tr></tbody></table></div>
       </div>
       <div class="panel">
        <div class="panel-head"><h3>Recent Activity</h3></div>
-       <div class="activity">
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Document uploaded</b><br>AI Policy.pdf</p><small>5 minutes ago</small></div></div>
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Approval completed</b><br>Risk Assessment</p><small>20 minutes ago</small></div></div>
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>User updated</b><br>Manager account</p><small>1 hour ago</small></div></div>
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Evidence added</b><br>Control A.6</p><small>2 hours ago</small></div></div>
-       </div>
+       <div class="activity"><div style="text-align:center;color:#71808d;padding:34px">No recent activity.</div></div>
       </div>
      </div>
 
      <div class="admin-dashboard-sections">
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>Compliance Overview</h3><button class="link page-action" data-message="Compliance overview opened">View Compliance</button></div>
-       <div class="compliance-progress"><div class="compliance-score"><span>Overall Compliance</span><strong>82%</strong></div><div class="progress-track"><div class="progress-fill"></div></div><div class="metric-list">
-        <div class="metric-row"><span>Implemented</span><strong>82%</strong></div><div class="metric-row"><span>In Progress</span><strong>10%</strong></div><div class="metric-row"><span>Pending</span><strong>5%</strong></div><div class="metric-row"><span>Not Applicable</span><strong>3%</strong></div>
+       <div class="compliance-progress"><div class="compliance-score"><span>Overall Compliance</span><strong>0%</strong></div><div class="progress-track"><div class="progress-fill"></div></div><div class="metric-list">
+        <div class="metric-row"><span>Implemented</span><strong>0%</strong></div><div class="metric-row"><span>In Progress</span><strong>0%</strong></div><div class="metric-row"><span>Pending</span><strong>0%</strong></div><div class="metric-row"><span>Not Applicable</span><strong>0%</strong></div>
        </div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>AI Governance</h3><button class="link page-action" data-message="AI Systems overview opened">View AI Systems</button></div>
-       <div class="metric-list"><div class="metric-row"><span>Total AI Systems</span><strong>12</strong></div><div class="metric-row"><span>Under Assessment</span><strong>3</strong></div><div class="metric-row"><span>High Risk</span><strong>2</strong></div><div class="metric-row"><span>Approved</span><strong>7</strong></div></div>
+       <div class="metric-list"><div class="metric-row"><span>Total AI Systems</span><strong>0</strong></div><div class="metric-row"><span>Under Assessment</span><strong>0</strong></div><div class="metric-row"><span>High Risk</span><strong>0</strong></div><div class="metric-row"><span>Approved</span><strong>0</strong></div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>Risk Overview</h3><button class="link page-action" data-message="Risk Register opened">View Risk Register</button></div>
-       <div class="metric-list"><div class="metric-row"><span>Critical</span><strong>2</strong></div><div class="metric-row"><span>High</span><strong>5</strong></div><div class="metric-row"><span>Medium</span><strong>8</strong></div><div class="metric-row"><span>Low</span><strong>12</strong></div></div>
+       <div class="metric-list"><div class="metric-row"><span>Critical</span><strong>0</strong></div><div class="metric-row"><span>High</span><strong>0</strong></div><div class="metric-row"><span>Medium</span><strong>0</strong></div><div class="metric-row"><span>Low</span><strong>0</strong></div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>Approval Workflow</h3><button class="link" data-open-view="adminApprovals">View Approvals</button></div>
-       <div class="metric-list"><div class="metric-row"><span>Pending Review</span><strong>8</strong></div><div class="metric-row"><span>Approved</span><strong>24</strong></div><div class="metric-row"><span>Rejected</span><strong>2</strong></div><div class="metric-row"><span>Overdue</span><strong>3</strong></div></div>
+       <div class="metric-list"><div class="metric-row"><span>Pending Review</span><strong>0</strong></div><div class="metric-row"><span>Approved</span><strong>0</strong></div><div class="metric-row"><span>Rejected</span><strong>0</strong></div><div class="metric-row"><span>Overdue</span><strong>0</strong></div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
@@ -184,11 +175,7 @@
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>Important Alerts</h3></div>
        <div class="alert-list">
-        <div class="alert-item"><span class="alert-dot"></span><span>3 documents expire within 7 days</span></div>
-        <div class="alert-item"><span class="alert-dot"></span><span>2 high-risk AI systems require review</span></div>
-        <div class="alert-item"><span class="alert-dot"></span><span>5 approvals are pending</span></div>
-        <div class="alert-item"><span class="alert-dot"></span><span>1 compliance finding is overdue</span></div>
-        <div class="alert-item"><span class="alert-dot"></span><span>2 security alerts require attention</span></div>
+        <div style="text-align:center;color:#71808d;padding:20px">No important alerts.</div>
        </div>
       </div>
      </div>
