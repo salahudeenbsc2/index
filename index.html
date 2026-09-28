@@ -161,7 +161,8 @@
         if(!['active','pending_invite'].includes(access.status)){await supabaseClient.auth.signOut();message("loginMsg","Administrator profile is missing, inactive, suspended or locked.","error");return}
         if(!accountRole){await supabaseClient.auth.signOut();message("loginMsg","This account does not have Admin Portal access.","error");return}
         if(selectedRole!==accountRole){await supabaseClient.auth.signOut();message("loginMsg",accountRole==="superadmin"?"This is a Super Admin account. Select Super Administrator.":"This is an Administrator account. Select Administrator.","error");return}
-        if(access.forcePasswordChange||access.status==='pending_invite'){await window.amChangeRequiredPassword();return}
+        // Admin accounts must enter the Admin Portal directly after a successful login.
+        // Do not block normal Admin login with the Set Your Password modal.
         const isSuperAdmin=accountRole==="superadmin";
         enterAdminPortal(isSuperAdmin);
       }catch(error){message("loginMsg","Unable to connect to Supabase. Check your internet connection.","error")}
@@ -800,7 +801,8 @@ showDialog(action==='delete'?'Delete Administrator':'Confirm Account Action','<p
 };
 let shown=false;new MutationObserver(()=>{const now=portal.classList.contains('super-admin')&&portal.classList.contains('show');if(now&&!shown){shown=true;load()}else if(!now&&shown){shown=false;dialog.close();rows=[];current=null;draw()}}).observe(portal,{attributes:true,attributeFilter:['class']});draw();
 window.amChangeRequiredPassword=async()=>{showDialog('Set Your Password','<form>'+password('New Password','password')+password('Confirm Password','confirm')+'<button class="action">Save Password</button><p role="alert" class="sa-error"></p></form>');dialog.querySelector('form').onsubmit=async e=>{e.preventDefault();const f=e.target;if(f.elements.password.value!==f.elements.confirm.value){f.querySelector('p').textContent='Passwords do not match.';return}f.querySelector('.action').disabled=true;try{await api('change_password',{password:f.elements.password.value});await supabaseClient.auth.signOut();dialog.close();message('loginMsg','Password updated. Sign in with your new password.','ok')}catch(ex){f.querySelector('p').textContent=ex.message}finally{f.querySelector('.action').disabled=false}}};
-supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'||(event==='SIGNED_IN'&&location.hash.includes('type=invite')))setTimeout(()=>window.amChangeRequiredPassword(),0)});
+// Password setup is not forced during Admin Portal sign-in.
+// Admin users enter the portal directly after successful authentication.
 // Supabase may process invitation/recovery tokens before this script is loaded.
 if(location.hash.includes('type=invite')||location.hash.includes('type=recovery'))setTimeout(()=>window.amChangeRequiredPassword(),0);
 })();
