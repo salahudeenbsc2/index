@@ -64,8 +64,8 @@
         <form id="loginForm" class="form active" novalidate autocomplete="off">
           <div class="heading"><h2>Admin Sign In</h2><p>Sign in to manage customers, approvals and legal documents.</p></div>
           <div id="loginMsg" class="message"></div>
-          <div class="field"><label for="loginEmail">Email address</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 4 8 8 8-8"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg><input id="loginEmail" name="admin_login_email" type="email" required autocomplete="email" placeholder="Enter your email address"></div></div>
-          <div class="field"><label for="loginPassword">Password</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input id="loginPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="Enter your password"><button type="button" class="eye" data-toggle="loginPassword" aria-label="Show password"><svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c6.5 0 10 8 10 8a16 16 0 0 1-2.1 3.2M6.2 6.2C3.4 8.1 2 12 2 12s3.5 8 10 8a9.8 9.8 0 0 0 3.8-.8"/></svg></button></div></div>
+          <div class="field"><label for="loginEmail">Email address</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 4 8 8 8-8"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg><input id="loginEmail" name="login_identifier" type="email" required autocomplete="new-password" autocapitalize="none" spellcheck="false" value="" placeholder="Enter your email address"></div></div>
+          <div class="field"><label for="loginPassword">Password</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input id="loginPassword" name="login_secret" type="password" required minlength="6" autocomplete="new-password" value="" placeholder="Enter your password"><button type="button" class="eye" data-toggle="loginPassword" aria-label="Show password"><svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c6.5 0 10 8 10 8a16 16 0 0 1-2.1 3.2M6.2 6.2C3.4 8.1 2 12 2 12s3.5 8 10 8a9.8 9.8 0 0 0 3.8-.8"/></svg></button></div></div>
           <div class="field"><label for="loginRole">Login role</label><select id="loginRole" required><option value="admin">Administrator</option><option value="superadmin">Super Administrator</option></select></div>
           <div class="row"><label class="remember"><input type="checkbox"> Remember me</label><button type="button" class="link" onclick="alert('Password reset link can be connected to your backend.')">Forgot password?</button></div>
           <button class="primary" type="submit">Sign In</button>
@@ -191,17 +191,39 @@
     document.getElementById("customerUpload").addEventListener("click",()=>{const f=document.getElementById("customerFile");document.getElementById("uploadMessage").textContent=f.files.length?`${f.files[0].name} uploaded successfully.`:"Please choose a document first."});
   </script>
 
-<script id="loginEmailCaseNormalize">
-document.addEventListener("DOMContentLoaded",function(){
-  const emailInput=document.getElementById("loginEmail");
-  if(!emailInput)return;
-  emailInput.addEventListener("input",function(){
-    const start=emailInput.selectionStart;
-    const end=emailInput.selectionEnd;
-    emailInput.value=emailInput.value.toLowerCase();
-    try{emailInput.setSelectionRange(start,end)}catch(e){}
-  });
-});
+<script id="loginInputAutofillFix">
+(function(){
+  function clearLoginFields(){
+    var email=document.getElementById('loginEmail');
+    var pass=document.getElementById('loginPassword');
+    if(email){ email.value=''; email.removeAttribute('readonly'); }
+    if(pass){ pass.value=''; pass.removeAttribute('readonly'); }
+  }
+  function bind(){
+    var email=document.getElementById('loginEmail');
+    var pass=document.getElementById('loginPassword');
+    if(!email||!pass)return;
+    clearLoginFields();
+    email.addEventListener('input',function(){
+      var start=email.selectionStart,end=email.selectionEnd;
+      email.value=email.value.toLowerCase();
+      try{email.setSelectionRange(start,end)}catch(e){}
+    });
+    email.addEventListener('focus',function(){
+      email.removeAttribute('readonly');
+      if(email.dataset.autofillCleared!=='1'){email.value='';email.dataset.autofillCleared='1';}
+    });
+    pass.addEventListener('focus',function(){
+      pass.removeAttribute('readonly');
+      if(pass.dataset.autofillCleared!=='1'){pass.value='';pass.dataset.autofillCleared='1';}
+    });
+    window.addEventListener('pageshow',clearLoginFields);
+    setTimeout(clearLoginFields,50);
+    setTimeout(clearLoginFields,300);
+    setTimeout(clearLoginFields,1000);
+  }
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',bind);else bind();
+})();
 </script>
 </body>
 <style>
