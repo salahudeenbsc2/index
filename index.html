@@ -199,6 +199,38 @@ document.addEventListener("DOMContentLoaded",function(){
   });
 });
 </script>
+
+<script>
+// FINAL ADMIN LOGIN SAFETY: never show the Set Your Password modal automatically.
+// Normal Admin accounts must enter the Admin Portal directly after successful login.
+(function(){
+  const blockPasswordSetupModal=()=>{
+    document.querySelectorAll('dialog, [role="dialog"]').forEach(el=>{
+      const t=(el.textContent||'').trim().toLowerCase();
+      if(t.includes('set your password') || t.includes('save password')){
+        try{el.close?.()}catch(e){}
+        if(el.parentNode) el.remove();
+      }
+    });
+  };
+  blockPasswordSetupModal();
+  new MutationObserver(blockPasswordSetupModal).observe(document.documentElement,{subtree:true,childList:true});
+  const originalShowDialog=window.showDialog;
+  if(typeof originalShowDialog==='function'){
+    window.showDialog=function(title,body){
+      if(String(title||'').toLowerCase().includes('set your password')) return;
+      return originalShowDialog.apply(this,arguments);
+    };
+  }
+  const originalModal=window.modal;
+  if(typeof originalModal==='function'){
+    window.modal=function(title,body){
+      if(String(title||'').toLowerCase().includes('set your password')) return;
+      return originalModal.apply(this,arguments);
+    };
+  }
+})();
+</script>
 </body>
 <style>
 #adminPortal.super-admin #adminDash{display:none!important}#saWorkspace{display:none}#adminPortal #saWorkspace.active{display:block}
