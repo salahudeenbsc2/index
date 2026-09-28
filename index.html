@@ -21,7 +21,12 @@
     @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:1fr}}
     @media(max-width:850px){.page{display:block}.brand{display:none}.auth{min-height:100vh;padding:32px 20px}.mobile-logo{display:flex;color:#102d45}.mobile-logo .logo-mark{color:#0a2942}.grid{grid-template-columns:1fr}.full{grid-column:auto}.portal-main{width:100%;margin-left:0}.sidebar{transform:translateX(-100%);transition:.25s}.sidebar.open{transform:translateX(0)}.hamb{display:block;margin-right:13px}.content{padding:20px}.topbar{padding:0 17px}.top-actions .user-name{display:none}.mobile-overlay.open{display:block;position:fixed;inset:0;background:#0006;z-index:15}.stats{grid-template-columns:1fr 1fr}.welcome{align-items:flex-start}.welcome h1{font-size:27px}}
     @media(max-width:520px){.stats{grid-template-columns:1fr}.welcome{display:block}.welcome .action{margin-top:14px;width:100%}.search-mini{min-width:0;width:100%}.panel-head{align-items:flex-start;gap:10px;flex-direction:column}}
-  </style>
+  
+/* Login input interaction fix */
+.auth, #authPage, #loginForm, #loginForm .field, #loginForm .input-wrap { pointer-events: auto !important; }
+#loginForm #loginEmail, #loginForm #loginPassword { pointer-events: auto !important; user-select: text !important; -webkit-user-select: text !important; position: relative; z-index: 100 !important; }
+#loginForm #loginEmail:not([readonly]), #loginForm #loginPassword:not([readonly]) { cursor: text !important; }
+</style>
 <style>
 .pay-settings-entry{display:none}.super-admin .pay-settings-entry{display:block}.pay-grid{gap:12px;margin:16px 0}.pay-grid .sa-card strong{font-size:27px}.pay-setup{margin:12px 0}.pay-meta{display:block;color:#687b8e;margin-top:4px}.pay-badge{display:inline-block;border-radius:20px;padding:5px 9px;white-space:nowrap;font-size:12px;font-weight:700}.pay-successful{background:#dcf5e7;color:#14643b}.pay-pending{background:#fff2c9;color:#835300}.pay-failed{background:#fee2e2;color:#a32121}.pay-cancelled{background:#e8edf2;color:#4c5c6d}.pay-refunded{background:#e7e0fa;color:#5b3291}.pay-partially-refunded{background:#deefff;color:#235c92}.pay-facts{display:grid;grid-template-columns:minmax(120px,1fr) 2fr;gap:10px}.pay-facts dt{font-weight:700}.pay-facts dd{margin:0;overflow-wrap:anywhere}.pay-hint{font-size:13px;color:#63768a}.pay-spinner{display:inline-block;animation:pay-spin 1s linear infinite}@keyframes pay-spin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.pay-spinner{animation:none}}@media(max-width:700px){.pay-facts{grid-template-columns:1fr}.pay-facts dd{margin-bottom:8px}.pay-table td{overflow-wrap:anywhere}}
 </style>
@@ -59,8 +64,8 @@
         <form id="loginForm" class="form active" novalidate autocomplete="off">
           <div class="heading"><h2>Admin Sign In</h2><p>Sign in to manage customers, approvals and legal documents.</p></div>
           <div id="loginMsg" class="message"></div>
-          <div class="field"><label for="loginEmail">Email address</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 4 8 8 8-8"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg><input id="loginEmail" name="admin_login_email" type="email" required autocomplete="new-password" readonly placeholder="Enter your email address"></div></div>
-          <div class="field"><label for="loginPassword">Password</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input id="loginPassword" type="password" required minlength="6" autocomplete="new-password" readonly placeholder="Enter your password"><button type="button" class="eye" data-toggle="loginPassword" aria-label="Show password"><svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c6.5 0 10 8 10 8a16 16 0 0 1-2.1 3.2M6.2 6.2C3.4 8.1 2 12 2 12s3.5 8 10 8a9.8 9.8 0 0 0 3.8-.8"/></svg></button></div></div>
+          <div class="field"><label for="loginEmail">Email address</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m4 4 8 8 8-8"/><rect x="3" y="4" width="18" height="16" rx="2"/></svg><input id="loginEmail" name="admin_login_email" type="email" required autocomplete="email" placeholder="Enter your email address"></div></div>
+          <div class="field"><label for="loginPassword">Password</label><div class="input-wrap"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input id="loginPassword" type="password" required minlength="6" autocomplete="current-password" placeholder="Enter your password"><button type="button" class="eye" data-toggle="loginPassword" aria-label="Show password"><svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c6.5 0 10 8 10 8a16 16 0 0 1-2.1 3.2M6.2 6.2C3.4 8.1 2 12 2 12s3.5 8 10 8a9.8 9.8 0 0 0 3.8-.8"/></svg></button></div></div>
           <div class="field"><label for="loginRole">Login role</label><select id="loginRole" required><option value="admin">Administrator</option><option value="superadmin">Super Administrator</option></select></div>
           <div class="row"><label class="remember"><input type="checkbox"> Remember me</label><button type="button" class="link" onclick="alert('Password reset link can be connected to your backend.')">Forgot password?</button></div>
           <button class="primary" type="submit">Sign In</button>
@@ -805,18 +810,6 @@ window.amChangeRequiredPassword=async()=>{showDialog('Set Your Password','<form>
 supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'||(event==='SIGNED_IN'&&location.hash.includes('type=invite')))setTimeout(()=>window.amChangeRequiredPassword(),0)});
 // Supabase may process invitation/recovery tokens before this script is loaded.
 if(location.hash.includes('type=invite')||location.hash.includes('type=recovery'))setTimeout(()=>window.amChangeRequiredPassword(),0);
-})();
-<script>
-// Prevent browser/password-manager autofill on Admin Sign In fields.
-(function(){
-  const email=document.getElementById("loginEmail");
-  const password=document.getElementById("loginPassword");
-  if(!email||!password)return;
-  const unlock=(el)=>{ el.value=""; el.removeAttribute("readonly"); el.setAttribute("autocomplete","new-password"); };
-  [email,password].forEach(el=>{
-    el.addEventListener("focus",()=>unlock(el),{once:true});
-  });
-  setTimeout(()=>{ email.value=""; password.value=""; },100);
 })();
 </script>
 
