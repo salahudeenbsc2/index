@@ -23,6 +23,16 @@
     @media(max-width:520px){.stats{grid-template-columns:1fr}.welcome{display:block}.welcome .action{margin-top:14px;width:100%}.search-mini{min-width:0;width:100%}.panel-head{align-items:flex-start;gap:10px;flex-direction:column}}
   
 /* Login input interaction fix */
+/* Final login input spacing and password visibility fix */
+#loginForm .input-wrap > svg{display:none !important}
+#loginForm #loginEmail,#loginForm #loginPassword{padding-left:14px !important}
+#loginForm #loginPassword{padding-right:54px !important}
+#loginForm .eye{display:grid !important;pointer-events:auto !important;z-index:120 !important;right:8px !important;top:7px !important}
+#loginForm .eye svg{display:block !important;position:static !important}
+#loginForm .eye .eye-off{display:none !important}
+#loginForm .eye.visible .eye-open{display:none !important}
+#loginForm .eye.visible .eye-off{display:block !important}
+
 .auth, #authPage, #loginForm, #loginForm .field, #loginForm .input-wrap { pointer-events: auto !important; }
 #loginForm #loginEmail, #loginForm #loginPassword { pointer-events: auto !important; user-select: text !important; -webkit-user-select: text !important; position: relative; z-index: 100 !important; }
 #loginForm #loginEmail:not([readonly]), #loginForm #loginPassword:not([readonly]) { cursor: text !important; }
@@ -166,7 +176,7 @@
         if(!['active','pending_invite'].includes(access.status)){await supabaseClient.auth.signOut();message("loginMsg","Administrator profile is missing, inactive, suspended or locked.","error");return}
         if(!accountRole){await supabaseClient.auth.signOut();message("loginMsg","This account does not have Admin Portal access.","error");return}
         if(selectedRole!==accountRole){await supabaseClient.auth.signOut();message("loginMsg",accountRole==="superadmin"?"This is a Super Admin account. Select Super Administrator.":"This is an Administrator account. Select Administrator.","error");return}
-        if(access.forcePasswordChange||access.status==='pending_invite'){await window.amChangeRequiredPassword();return}
+        
         const isSuperAdmin=accountRole==="superadmin";
         enterAdminPortal(isSuperAdmin);
       }catch(error){message("loginMsg","Unable to connect to Supabase. Check your internet connection.","error")}
@@ -814,7 +824,7 @@ async function load(){if(loading)return;loading=true;notice='Loading administrat
 form.onsubmit=e=>{e.preventDefault();draw()};form.onreset=()=>setTimeout(draw,0);panel.querySelector('#amCards').onclick=e=>{const b=e.target.closest('[data-status]');if(b){form.reset();form.elements.status.value=b.dataset.status;draw()}};panel.querySelector('#amReload').onclick=load;
 function edit(a=null,mode='edit'){
 if(a&&protectedAccount(a))return;const creating=!a;
-showDialog(creating?'Add Administrator':mode==='role'?'Change Role':mode==='department'?'Assign Department':'Edit Administrator','<form id="amEditor"><div class="grid">'+input('Full Name','full_name',a?.full_name||'')+input('Admin ID — automatically generated','admin_id',a?.admin_id||'Assigned securely when saved','text',false,'readonly')+input('Email','email',a?.email||'','email',true,a?'readonly':'')+input('Phone Number','phone',a?.phone||'','tel',true,'pattern="[+0-9 ()-]{7,20}"')+(creating?password('Temporary Password','password')+password('Confirm Password','confirm'):'')+'<label>Select Role<select name="role">'+roles.map((r,i)=>'<option value="'+codes[i]+'" '+(codes[i]===(a?.role||'document_manager')?'selected':'')+'>'+r+'</option>').join('')+'</select></label><label>Select Department<select name="department">'+options(departments,a?.department||'Documents')+'</select></label><label>Account Status<select name="status">'+options(statuses,a?.status||'Active')+'</select></label></div>'+(creating?'<label class="am-check"><input type="checkbox" name="invite">Send Invitation Email</label>':'')+'<label class="am-check"><input type="checkbox" name="force" '+(a?.force_password_change!==false?'checked':'')+'>Force Password Change on First Login</label><p class="sa-muted">Passwords are sent to Supabase over HTTPS and are never saved in this HTML or browser storage.</p><p class="sa-error" role="alert"></p><div class="sa-actions"><button type="button" class="table-btn" id="amCancel">Cancel</button><button class="action" type="submit">Save Administrator</button></div></form>');
+showDialog(creating?'Add Administrator':mode==='role'?'Change Role':mode==='department'?'Assign Department':'Edit Administrator','<form id="amEditor"><div class="grid">'+input('Full Name','full_name',a?.full_name||'')+input('Admin ID — automatically generated','admin_id',a?.admin_id||'Assigned securely when saved','text',false,'readonly')+input('Email','email',a?.email||'','email',true,a?'readonly':'')+input('Phone Number','phone',a?.phone||'','tel',true,'pattern="[+0-9 ()-]{7,20}"')+(creating?password('Temporary Password','password')+password('Confirm Password','confirm'):'')+'<label>Select Role<select name="role">'+roles.map((r,i)=>'<option value="'+codes[i]+'" '+(codes[i]===(a?.role||'document_manager')?'selected':'')+'>'+r+'</option>').join('')+'</select></label><label>Select Department<select name="department">'+options(departments,a?.department||'Documents')+'</select></label><label>Account Status<select name="status">'+options(statuses,a?.status||'Active')+'</select></label></div>'+(creating?'<label class="am-check"><input type="checkbox" name="invite">Send Invitation Email</label>':'')+'<label class="am-check"><input type="checkbox" name="force">Force Password Change on First Login</label><p class="sa-muted">Passwords are sent to Supabase over HTTPS and are never saved in this HTML or browser storage.</p><p class="sa-error" role="alert"></p><div class="sa-actions"><button type="button" class="table-btn" id="amCancel">Cancel</button><button class="action" type="submit">Save Administrator</button></div></form>');
 const f=dialog.querySelector('form');dialog.querySelector('#amCancel').onclick=()=>dialog.close();if(creating){f.elements.invite.onchange=()=>{const invite=f.elements.invite.checked;for(const name of ['password','confirm']){f.elements[name].required=!invite;f.elements[name].disabled=invite;f.elements[name].value=''}if(invite)f.elements.status.value='Pending Invite'};}
 f.onsubmit=async e=>{e.preventDefault();const fd=new FormData(f),out=f.querySelector('[role="alert"]');if(creating&&!fd.has('invite')&&fd.get('password')!==fd.get('confirm')){out.textContent='Passwords do not match.';return}const payload={user_id:a?.user_id,full_name:String(fd.get('full_name')||'').trim(),email:String(fd.get('email')||'').trim().toLowerCase(),phone:fd.get('phone')||'',role:normalizeRoleCode(fd.get('role')),department:fd.get('department'),status:fd.get('status'),force_password_change:fd.has('force'),invite:fd.has('invite'),password:String(fd.get('password')||'')};if(!payload.full_name){out.textContent='Enter a full name.';return}if(!payload.email){out.textContent='Enter a valid email address.';return}if(creating&&!payload.invite&&payload.password.length<12){out.textContent='Temporary Password must be at least 12 characters.';return}const button=f.querySelector('[type="submit"]');button.disabled=true;try{await api(creating?'create':'edit',{admin:payload});f.reset();dialog.close();await load()}catch(ex){out.textContent=ex.message}finally{button.disabled=false}};
 }
@@ -829,9 +839,9 @@ showDialog(action==='delete'?'Delete Administrator':'Confirm Account Action','<p
 };
 let shown=false;new MutationObserver(()=>{const now=portal.classList.contains('super-admin')&&portal.classList.contains('show');if(now&&!shown){shown=true;load()}else if(!now&&shown){shown=false;dialog.close();rows=[];current=null;draw()}}).observe(portal,{attributes:true,attributeFilter:['class']});draw();
 window.amChangeRequiredPassword=async()=>{showDialog('Set Your Password','<form>'+password('New Password','password')+password('Confirm Password','confirm')+'<button class="action">Save Password</button><p role="alert" class="sa-error"></p></form>');dialog.querySelector('form').onsubmit=async e=>{e.preventDefault();const f=e.target,out=f.querySelector('p'),passwordValue=f.elements.password.value;if(passwordValue!==f.elements.confirm.value){out.textContent='Passwords do not match.';return}if(passwordValue.length<12){out.textContent='Password must be at least 12 characters.';return}const button=f.querySelector('.action');button.disabled=true;try{const {data,error}=await supabaseClient.functions.invoke('Admin-management-index-ts',{body:{action:'change_password_self',password:passwordValue}});if(error){let detail='';try{const body=await error.context.clone().json();detail=body.error||body.message||''}catch{}throw Error(detail||error.message||'Password update failed.')}if(!data?.ok)throw Error(data?.error||'Password update failed.');await supabaseClient.auth.signOut();dialog.close();message('loginMsg','Password updated. Sign in with your new password.','ok')}catch(ex){out.textContent=ex.message}finally{button.disabled=false}}};
-supabaseClient.auth.onAuthStateChange((event,session)=>{if(event==='PASSWORD_RECOVERY'||(event==='SIGNED_IN'&&location.hash.includes('type=invite')))setTimeout(()=>window.amChangeRequiredPassword(),0)});
+supabaseClient.auth.onAuthStateChange((event,session)=>{});
 // Supabase may process invitation/recovery tokens before this script is loaded.
-if(location.hash.includes('type=invite')||location.hash.includes('type=recovery'))setTimeout(()=>window.amChangeRequiredPassword(),0);
+
 })();
 </script>
 
@@ -868,7 +878,7 @@ if(location.hash.includes('type=invite')||location.hash.includes('type=recovery'
     if(!verified.data.user)throw Error('Session unavailable');
     const access=await getAdminAccess(verified.data.user);if(run!==generation)return;
     if(!['active','pending_invite'].includes(access.status)||!access.isAdmin&&!access.isSuperAdmin){message('loginMsg','This administrator account is not active or authorized.','error');return}
-    if(access.forcePasswordChange||access.status==='pending_invite'){await window.amChangeRequiredPassword();return}
+    
     document.getElementById('loginRole').value=access.isSuperAdmin?'superadmin':'admin';
     enterAdminPortal(access.isSuperAdmin);
    })(),new Promise((_,reject)=>{timer=setTimeout(()=>reject(Error('Connection timed out')),15000)})]);
