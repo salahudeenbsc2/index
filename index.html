@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>(function(){
+function killPasswordSetup(){document.querySelectorAll("dialog,[role=dialog],.modal,.overlay").forEach(function(el){var t=(el.textContent||"").toLowerCase();if(t.includes("set your password")||t.includes("save password")){try{el.close&&el.close()}catch(e){};el.remove()}})}
+try{new MutationObserver(killPasswordSetup).observe(document.documentElement,{childList:true,subtree:true})}catch(e){}
+if(document.readyState!=="loading")killPasswordSetup();else document.addEventListener("DOMContentLoaded",killPasswordSetup);
+window.addEventListener("load",killPasswordSetup);
+})();</script>
+
   <meta charset="UTF-8">
+<meta name="admin-dashboard-build" content="iso42001-final-no-password-modal-v1">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FalvorIntel Admin Portal</title>
   <style>
@@ -15,8 +23,28 @@
     .field{margin-bottom:18px}.field label{display:block;font-size:13px;font-weight:700;margin-bottom:8px}.input-wrap{position:relative}.input-wrap svg{position:absolute;left:14px;top:14px;color:#7c8d9b}.input-wrap input,.field select{width:100%;height:49px;border:1px solid #d8e0e7;border-radius:10px;background:white;outline:0;padding:0 14px}.input-wrap input{padding-left:45px;padding-right:44px}.input-wrap input:focus,.field select:focus{border-color:#c79822;box-shadow:0 0 0 3px rgba(199,152,34,.12)}
     .eye{position:absolute;right:8px;top:7px;width:36px;height:36px;border:0;border-radius:8px;background:transparent;color:#617586;cursor:pointer;display:grid;place-items:center}.eye:hover{background:#edf2f6;color:#123f60}.eye svg{position:static;pointer-events:none}.eye .eye-off{display:none}.eye.visible .eye-open{display:none}.eye.visible .eye-off{display:block}.row{display:flex;justify-content:space-between;align-items:center;margin:2px 0 22px;font-size:13px}.remember{display:flex;align-items:center;gap:8px}.remember input{accent-color:#123f60}.link{border:0;background:none;color:#946b08;font-weight:700;cursor:pointer;text-decoration:none}
     .primary{width:100%;height:50px;border:0;border-radius:10px;background:#123f60;color:white;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(18,63,96,.18)}.primary:hover{background:#0b304c}.switch{text-align:center;margin-top:24px;color:#6b7a88;font-size:14px}.security{display:flex;justify-content:center;align-items:center;gap:7px;color:#7b8994;font-size:12px;margin-top:30px}
-    .form{display:none}.form.active{display:block;animation:show .3s ease}.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.full{grid-column:1/-1}.message{display:none;margin:0 0 18px;padding:12px 14px;border-radius:9px;font-size:13px}.message.show{display:block}.message:empty{display:none}.message.ok{background:#e6f6ef;color:#167550}.message.error{background:#fff0ee;color:#b43b2e}.superadmin-nav{display:none}.portal.super-admin .admin-nav{display:none}.portal.super-admin .superadmin-nav{display:grid}
-    .portal{display:none;min-height:100vh;background:#f4f7fa}.portal.show{display:flex}.sidebar{width:255px;position:fixed;inset:0 auto 0 0;background:#102d45;color:white;padding:22px 15px;display:flex;flex-direction:column;overflow:hidden;z-index:20}.side-logo{display:flex;align-items:center;gap:11px;padding:0 9px 24px;border-bottom:1px solid #ffffff1c;flex-shrink:0}.side-logo .logo-mark{width:40px;height:40px}.side-logo p{font-size:11px;color:#a9c0d1}.nav{padding-top:20px;display:grid;gap:5px}.sidebar>nav.nav{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;align-content:start;padding-right:4px;scrollbar-width:thin;scrollbar-color:#5c7890 transparent}.sidebar>nav.nav::-webkit-scrollbar{width:6px}.sidebar>nav.nav::-webkit-scrollbar-thumb{background:#5c7890;border-radius:10px}.nav button{border:0;background:transparent;color:#bcd0dd;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:9px;text-align:left;cursor:pointer}.nav button:hover,.nav button.active{background:#ffffff16;color:white}.nav .count{margin-left:auto;background:#d5a62b;color:#102d45;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:800}.side-bottom{margin-top:auto;border-top:1px solid #ffffff1c;padding-top:13px;flex-shrink:0;background:#102d45}.portal-main{width:calc(100% - 255px);margin-left:255px}.topbar{height:74px;background:white;border-bottom:1px solid #dfe6eb;display:flex;align-items:center;padding:0 30px;position:sticky;top:0;z-index:10}.topbar h2{font-size:20px}.topbar p{font-size:12px;color:#748493;margin-top:3px}.top-actions{margin-left:auto;display:flex;align-items:center;gap:13px}.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e5edf3;font-weight:800}.logout{border:1px solid #d5dde4;background:white;padding:9px 14px;border-radius:9px;cursor:pointer}.hamb{display:none;border:0;background:none;font-size:24px}.content{padding:28px;max-width:1500px;margin:auto}.welcome{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:22px}.welcome h1{font:32px Georgia,serif}.welcome p{color:#71808d;margin-top:6px}.action{border:0;border-radius:9px;background:#c89925;color:#102d45;padding:12px 17px;font-weight:800;cursor:pointer}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.stat{background:white;border:1px solid #e0e7ec;border-radius:13px;padding:19px;box-shadow:0 3px 13px #17324b0b}.stat-head{display:flex;justify-content:space-between;color:#6e7e8b;font-size:13px}.stat-icon{width:37px;height:37px;border-radius:9px;display:grid;place-items:center;background:#eaf1f7;color:#174a70}.stat strong{display:block;font-size:28px;margin:8px 0 5px}.stat small{color:#768691}.panel{margin-top:18px;background:white;border:1px solid #dfe7ed;border-radius:13px;overflow:hidden}.panel-head{padding:18px 20px;border-bottom:1px solid #e5ebef;display:flex;align-items:center;justify-content:space-between}.panel-head h3{font-size:17px}.search-mini{border:1px solid #d8e1e8;border-radius:8px;padding:9px 12px;min-width:220px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:820px}th{background:#f7f9fb;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6d7d89;padding:12px 18px}td{padding:14px 18px;border-top:1px solid #edf1f4;font-size:13px}.doc-cell{display:flex;align-items:center;gap:10px;font-weight:700}.file-icon{width:35px;height:35px;background:#fff0ed;color:#cb4936;border-radius:8px;display:grid;place-items:center}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800}.green{background:#e4f5ed;color:#157151}.amber{background:#fff3d6;color:#966b08}.red{background:#ffeae7;color:#b2392e}.blue{background:#e6f0fb;color:#245e96}.table-btn{border:1px solid #d9e1e7;background:white;padding:6px 9px;border-radius:7px;cursor:pointer}.portal-view{display:none}.portal-view.active{display:block}.quick-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}.activity{padding:18px 20px}.activity-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #edf1f4}.activity-item:last-child{border:0}.activity-dot{width:9px;height:9px;background:#c89925;border-radius:50%;margin-top:5px}.activity p{font-size:13px}.activity small{color:#7b8994}.upload-area{border:2px dashed #cad6df;border-radius:13px;margin:20px;padding:35px;text-align:center;background:#f9fbfc}.upload-area input{margin:16px auto;display:block}.mobile-overlay{display:none}
+    .form{display:none}.form.active{display:block;animation:show .3s ease}.grid{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}.full{grid-column:1/-1}.message{display:none;margin:0 0 18px;padding:12px 14px;border-radius:9px;font-size:13px}.message.show{display:block}.message:empty{display:none}.message.ok{background:#e6f6ef;color:#167550}.message.error{background:#fff0ee;color:#b43b2e}.superadmin-nav{display:none!important}.portal:not(.super-admin) .sidebar .admin-nav{display:grid}.portal:not(.super-admin) .sidebar .superadmin-nav{display:none!important}.portal.super-admin .sidebar .admin-nav{display:none!important}.portal.super-admin .sidebar .superadmin-nav{display:grid!important}.portal.super-admin .sidebar .side-bottom.admin-nav,.portal:not(.super-admin) .sidebar .side-bottom.superadmin-nav{display:none!important}
+    .portal{display:none;min-height:100vh;background:#f4f7fa}.portal.show{display:flex}.sidebar{width:255px;position:fixed;inset:0 auto 0 0;background:#102d45;color:white;padding:22px 15px;display:flex;flex-direction:column;overflow:hidden;z-index:20}.side-logo{display:flex;align-items:center;gap:11px;padding:0 9px 24px;border-bottom:1px solid #ffffff1c;flex-shrink:0}.side-logo .logo-mark{width:40px;height:40px}.side-logo p{font-size:11px;color:#a9c0d1}.nav{padding-top:20px;display:grid;gap:5px}.sidebar>nav.nav{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;align-content:start;padding-right:4px;scrollbar-width:thin;scrollbar-color:#5c7890 transparent}.sidebar>nav.nav::-webkit-scrollbar{width:6px}.sidebar>nav.nav::-webkit-scrollbar-thumb{background:#5c7890;border-radius:10px}.nav button{border:0;background:transparent;color:#bcd0dd;display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:9px;text-align:left;cursor:pointer}.nav button:hover,.nav button.active{background:#ffffff16;color:white}.nav .count{margin-left:auto;background:#d5a62b;color:#102d45;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:800}.side-bottom{margin-top:auto;border-top:1px solid #ffffff1c;padding-top:13px;flex-shrink:0;background:#102d45}.portal-main{width:calc(100% - 255px);margin-left:255px}.topbar{height:74px;background:white;border-bottom:1px solid #dfe6eb;display:flex;align-items:center;padding:0 30px;position:sticky;top:0;z-index:10}.topbar h2{font-size:20px}.topbar p{font-size:12px;color:#748493;margin-top:3px}.top-actions{margin-left:auto;display:flex;align-items:center;gap:13px}.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:#e5edf3;font-weight:800}.logout{border:1px solid #d5dde4;background:white;padding:9px 14px;border-radius:9px;cursor:pointer}.hamb{display:none;border:0;background:none;font-size:24px}.content{padding:28px;max-width:1500px;margin:auto}.welcome{display:flex;justify-content:space-between;align-items:end;gap:15px;margin-bottom:22px}.welcome h1{font:32px Georgia,serif}.welcome p{color:#71808d;margin-top:6px}.action{border:0;border-radius:9px;background:#c89925;color:#102d45;padding:12px 17px;font-weight:800;cursor:pointer}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px}.stat{background:white;border:1px solid #e0e7ec;border-radius:13px;padding:19px;box-shadow:0 3px 13px #17324b0b}.stat-head{display:flex;justify-content:space-between;color:#6e7e8b;font-size:13px}.stat-icon{width:37px;height:37px;border-radius:9px;display:grid;place-items:center;background:#eaf1f7;color:#174a70}.stat strong{display:block;font-size:28px;margin:8px 0 5px}.stat small{color:#768691}.panel{margin-top:18px;background:white;border:1px solid #dfe7ed;border-radius:13px;overflow:hidden}.panel-head{padding:18px 20px;border-bottom:1px solid #e5ebef;display:flex;align-items:center;justify-content:space-between}.panel-head h3{font-size:17px}.search-mini{border:1px solid #d8e1e8;border-radius:8px;padding:9px 12px;min-width:220px}.table-wrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:820px}th{background:#f7f9fb;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#6d7d89;padding:12px 18px}td{padding:14px 18px;border-top:1px solid #edf1f4;font-size:13px}.doc-cell{display:flex;align-items:center;gap:10px;font-weight:700}.file-icon{width:35px;height:35px;background:#fff0ed;color:#cb4936;border-radius:8px;display:grid;place-items:center}.badge{display:inline-block;padding:5px 9px;border-radius:20px;font-size:11px;font-weight:800}.green{background:#e4f5ed;color:#157151}.amber{background:#fff3d6;color:#966b08}.red{background:#ffeae7;color:#b2392e}.blue{background:#e6f0fb;color:#245e96}.table-btn{border:1px solid #d9e1e7;background:white;padding:6px 9px;border-radius:7px;cursor:pointer}.portal-view{display:none}.portal-view.active{display:block}.quick-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+    .admin-dashboard-sections{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:18px}
+    .admin-dashboard-card{margin-top:0}
+    .admin-dashboard-card .metric-list{padding:18px 20px;display:grid;gap:10px}
+    .admin-dashboard-card .metric-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #edf1f4;font-size:13px}
+    .admin-dashboard-card .metric-row:last-child{border-bottom:0}
+    .admin-dashboard-card .metric-row strong{font-size:15px;color:#102d45}
+    .admin-dashboard-card .metric-row span{color:#71808d}
+    .admin-dashboard-card .panel-action{padding:0 20px 18px}
+    .admin-dashboard-card .panel-action .link{font-weight:800}
+    .quick-actions{display:flex;flex-wrap:wrap;gap:10px;padding:18px 20px}
+    .quick-actions .action,.quick-actions .table-btn{font-size:12px}
+    .alert-list{padding:18px 20px;display:grid;gap:12px}
+    .alert-item{display:flex;gap:10px;align-items:flex-start;font-size:13px;color:#31485a}
+    .alert-dot{width:8px;height:8px;border-radius:50%;background:#c89925;margin-top:5px;flex:0 0 auto}
+    .compliance-progress{padding:18px 20px}
+    .compliance-score{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .compliance-score strong{font-size:28px;color:#102d45}
+    .progress-track{height:9px;background:#e9eff3;border-radius:20px;overflow:hidden}
+    .progress-fill{height:100%;width:82%;background:#c89925;border-radius:20px}
+    .activity{padding:18px 20px}.activity-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid #edf1f4}.activity-item:last-child{border:0}.activity-dot{width:9px;height:9px;background:#c89925;border-radius:50%;margin-top:5px}.activity p{font-size:13px}.activity small{color:#7b8994}.upload-area{border:2px dashed #cad6df;border-radius:13px;margin:20px;padding:35px;text-align:center;background:#f9fbfc}.upload-area input{margin:16px auto;display:block}.mobile-overlay{display:none}
     @keyframes show{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
     @media(max-width:1000px){.stats{grid-template-columns:repeat(2,1fr)}.quick-grid{grid-template-columns:1fr}}
     @media(max-width:850px){.page{display:block}.brand{display:none}.auth{min-height:100vh;padding:32px 20px}.mobile-logo{display:flex;color:#102d45}.mobile-logo .logo-mark{color:#0a2942}.grid{grid-template-columns:1fr}.full{grid-column:auto}.portal-main{width:100%;margin-left:0}.sidebar{transform:translateX(-100%);transition:.25s}.sidebar.open{transform:translateX(0)}.hamb{display:block;margin-right:13px}.content{padding:20px}.topbar{padding:0 17px}.top-actions .user-name{display:none}.mobile-overlay.open{display:block;position:fixed;inset:0;background:#0006;z-index:15}.stats{grid-template-columns:1fr 1fr}.welcome{align-items:flex-start}.welcome h1{font-size:27px}}
@@ -88,119 +116,92 @@
   <section class="portal" id="adminPortal">
    <div class="mobile-overlay"></div><aside class="sidebar"><div class="side-logo"><div class="logo-mark">✓</div><div><b>FalvorIntel</b><p id="sideRoleLabel">ADMIN PORTAL</p></div></div><nav class="nav admin-nav">
     <button class="active" data-admin-view="adminDash">▦ Dashboard</button><button data-admin-view="adminDocs">▤ All Documents <span class="count">0</span></button><button data-admin-view="adminProperties">▣ Properties</button><button data-admin-view="adminCases">⚖ Legal Cases <span class="count">0</span></button><button data-admin-view="adminApprovals">✓ Approvals <span class="count">0</span></button><button data-admin-view="adminCustomers">♙ Customers</button><button data-admin-view="adminExpiry">◷ Expiry Tracking</button><button data-admin-view="adminActivity">⌁ Activity Logs</button>
-   </nav><nav class="nav superadmin-nav"><button class="active" data-cloud-page="Dashboard">▦ Dashboard</button><button data-cloud-page="Documents">▤ All Documents</button><button data-cloud-page="Document Categories">▦ Document Categories</button><button data-cloud-page="Properties">▣ Properties</button><button data-cloud-page="Legal Cases">⚖ Legal Cases</button><button data-cloud-page="Approvals">✓ Approvals</button><button data-cloud-page="Customers">♙ Customers</button><button data-cloud-page="Expiry Tracking">◷ Expiry Tracking</button><button data-cloud-page="Payments">▤ Payments</button><button data-cloud-page="Notifications">♢ Notifications</button><button data-admin-view="adminManagement">♛ Admin Management</button><button data-cloud-page="Roles &amp; Permissions">⌘ Roles &amp; Permissions</button><button data-cloud-page="Activity Logs">⌁ Activity Logs</button></nav><div class="nav side-bottom admin-nav"><button data-admin-view="adminSettings">⚙ Settings</button><button class="portal-logout">⇥ Logout</button></div><div class="nav side-bottom superadmin-nav"><button data-admin-view="adminSettings">⚙ Settings</button><button class="portal-logout">⇥ Logout</button></div></aside>
+   </nav><nav class="nav superadmin-nav"><button class="active" data-cloud-page="Dashboard">▦ Dashboard</button><button data-cloud-page="Documents">▤ All Documents</button><button data-cloud-page="Document Categories">▦ Document Categories</button><button data-cloud-page="Properties">▣ Properties</button><button data-cloud-page="Legal Cases">⚖ Legal Cases</button><button data-cloud-page="Approvals">✓ Approvals</button><button data-cloud-page="Customers">♙ Customers</button><button data-cloud-page="Expiry Tracking">◷ Expiry Tracking</button><button data-cloud-page="Payments">▤ Payments</button><button data-cloud-page="Notifications">♢ Notifications</button><button data-admin-view="adminManagement">♛ Admin Management</button><button data-cloud-page="Roles &amp; Permissions">⌘ Roles &amp; Permissions</button><button data-cloud-page="Activity Logs">⌁ Activity Logs</button></nav><div class="nav side-bottom"><button data-admin-view="adminSettings">⚙ Settings</button><button class="portal-logout">⇥ Logout</button></div></aside>
    <main class="portal-main"><header class="topbar"><button class="hamb">☰</button><div><h2 id="portalRoleTitle">Admin Portal</h2><p>Manage documents and customer access</p></div><div class="top-actions"><span>🔔</span><div class="avatar">SN</div><span class="user-name"><b>Salahudeen</b><br><small id="portalRoleName">Administrator</small></span><button class="logout portal-logout">Logout</button></div></header>
-    <div class="content"><section class="portal-view active" id="adminDash"><div class="welcome"><div><h1>Good morning, Salahudeen</h1><p>Here is what is happening in your document vault.</p></div><button class="action" data-open-view="adminDocs">+ Add Document</button></div>
-     <div class="stats"><div class="stat"><div class="stat-head">Total Documents <span class="stat-icon">▤</span></div><strong>0</strong><small>No documents added</small></div><div class="stat"><div class="stat-head">Active Customers <span class="stat-icon">♙</span></div><strong>0</strong><small>No active customers</small></div><div class="stat"><div class="stat-head">Pending Approvals <span class="stat-icon">✓</span></div><strong>0</strong><small>No pending approvals</small></div><div class="stat"><div class="stat-head">Expiring Soon <span class="stat-icon">◷</span></div><strong>0</strong><small>No upcoming expiry</small></div></div>
-     <div class="quick-grid"><div class="panel"><div class="panel-head"><h3>Recent Documents</h3><button class="link" data-open-view="adminDocs">View all</button></div><div class="table-wrap"><table><thead><tr><th>Document</th><th>Customer</th><th>Status</th></tr></thead><tbody><tr><td colspan="3" style="text-align:center;color:#71808d;padding:34px">No documents available.</td></tr></tbody></table></div></div>
-      <div class="panel"><div class="panel-head"><h3>Recent Activity</h3></div><div class="activity"><div style="text-align:center;color:#71808d;padding:34px 10px">No recent activity.</div></div></div></div>
-    </section>
-    <section class="portal-view" id="adminDocs">
-      <style>
-        #adminDocs .doc-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 22px}
-        #adminDocs .doc-summary .stat{min-height:112px}
-        #adminDocs .doc-filters{padding:20px;margin-bottom:16px}
-        #adminDocs .doc-filter-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
-        #adminDocs .doc-filter-grid .field{min-width:0}
-        #adminDocs .doc-filter-grid .field.search-wide{grid-column:span 2}
-        #adminDocs .doc-filter-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
-        #adminDocs .doc-bulk{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:14px 0}
-        #adminDocs .doc-table-wrap{overflow:auto}
-        #adminDocs .doc-table{min-width:1050px}
-        #adminDocs .doc-empty{padding:48px 20px;text-align:center;color:#71808d}
-        #adminDocs .doc-empty .file-icon{display:inline-flex;margin-bottom:12px;font-size:20px}
-        @media(max-width:1100px){#adminDocs .doc-summary{grid-template-columns:repeat(2,minmax(0,1fr))}#adminDocs .doc-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}#adminDocs .doc-filter-grid .field.search-wide{grid-column:span 2}}
-        @media(max-width:640px){#adminDocs .doc-summary,#adminDocs .doc-filter-grid{grid-template-columns:1fr}#adminDocs .doc-filter-grid .field.search-wide{grid-column:auto}}
-      </style>
-      <div class="welcome">
-        <div><h1>Documents</h1><p>Manage ISO/IEC 42001 documents, versions, approvals and expiry tracking.</p></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="table-btn" type="button" data-message="Documents refreshed">⟳ Refresh</button>
-          <button class="action" id="adminUploadBtn">+ Upload Document</button>
-        </div>
-      </div>
+    <div class="content"><section class="portal-view active" id="adminDash">
+     <div class="welcome"><div><h1>Good morning, Admin 👋</h1><p>Here’s an overview of your organization’s AI governance and compliance activities.</p></div><button class="action" data-open-view="adminDocs">+ Add Document</button></div>
 
-      <div class="doc-summary">
-        <div class="stat"><div class="stat-head">Total Documents</div><strong>0</strong></div>
-        <div class="stat"><div class="stat-head">Pending Review</div><strong>0</strong></div>
-        <div class="stat"><div class="stat-head">Approved</div><strong>0</strong></div>
-        <div class="stat"><div class="stat-head">Correction Required</div><strong>0</strong></div>
-        <div class="stat"><div class="stat-head">Rejected</div><strong>0</strong></div>
-        <div class="stat"><div class="stat-head">Expiring Soon</div><strong>0</strong></div>
-        <div class="stat"><div class="stat-head">Expired</div><strong>0</strong></div>
-        <div class="stat"><div class="stat-head">Archived</div><strong>0</strong></div>
-      </div>
+     <div class="stats">
+      <div class="stat"><div class="stat-head">Total Documents <span class="stat-icon">▤</span></div><strong>0</strong><small>Total number of documents</small></div>
+      <div class="stat"><div class="stat-head">AI Systems <span class="stat-icon">◈</span></div><strong>12</strong><small>Registered AI systems</small></div>
+      <div class="stat"><div class="stat-head">Pending Approvals <span class="stat-icon">✓</span></div><strong>8</strong><small>Approval workflow status</small></div>
+      <div class="stat"><div class="stat-head">Compliance Score <span class="stat-icon">%</span></div><strong>82%</strong><small>Current compliance status</small></div>
+      <div class="stat"><div class="stat-head">Open Risks <span class="stat-icon">!</span></div><strong>27</strong><small>Active risks</small></div>
+      <div class="stat"><div class="stat-head">Open Findings <span class="stat-icon">⚑</span></div><strong>1</strong><small>Audit/nonconformity findings</small></div>
+      <div class="stat"><div class="stat-head">Expiring Soon <span class="stat-icon">◷</span></div><strong>3</strong><small>Documents/certifications nearing expiry</small></div>
+      <div class="stat"><div class="stat-head">Active Users <span class="stat-icon">♙</span></div><strong>0</strong><small>Organization users</small></div>
+     </div>
 
-      <div class="panel doc-filters">
-        <div class="panel-head"><h3>Search &amp; Filter</h3></div>
-        <div class="doc-filter-grid">
-          <div class="field search-wide"><label>Search</label><input id="adminDocSearch" class="table-search" placeholder="Document ID / Document Name / Owner"></div>
-          <div class="field"><label>Department</label><select id="adminDocDepartment"><option>All Departments</option><option>CISO</option><option>Management</option><option>IT</option><option>HR</option><option>Legal</option><option>Operations</option></select></div>
-          <div class="field"><label>Document Type</label><select><option>All Document Types</option><option>Policy</option><option>Procedure</option><option>Evidence</option><option>Record</option><option>Risk</option><option>Assessment</option><option>AI Governance</option><option>Legal</option></select></div>
-          <div class="field"><label>Property / Legal Case</label><select><option>All Properties / Legal Cases</option></select></div>
-          <div class="field"><label>Approval Status</label><select><option>All Approval Status</option><option>Draft</option><option>Submitted</option><option>Under Review</option><option>Correction Required</option><option>Approved</option><option>Rejected</option><option>Archived</option></select></div>
-          <div class="field"><label>Expiry Status</label><select><option>All Expiry Status</option><option>Valid</option><option>Expiring Soon</option><option>Expired</option></select></div>
-          <div class="field"><label>From Date</label><input type="date"></div>
-          <div class="field"><label>To Date</label><input type="date"></div>
-          <div class="field"><label>Document Category</label><select><option>All Categories</option><option>Policy</option><option>Procedure</option><option>Evidence</option><option>Record</option><option>Risk</option><option>Assessment</option><option>AI Governance</option><option>Legal</option></select></div>
-          <div class="field"><label>Document Owner</label><select><option>All Owners</option><option>CISO</option><option>Manager</option><option>Admin</option><option>Department</option></select></div>
-          <div class="field"><label>Version</label><select><option>All Versions</option><option>Current</option><option>Previous Versions</option></select></div>
-        </div>
-        <div class="doc-filter-actions">
-          <button class="action" type="button" data-message="Document filters applied">Search</button>
-          <button class="table-btn" type="button" data-message="Document filters reset">Reset</button>
-          <button class="table-btn" type="button" data-message="Documents exported">Export</button>
-        </div>
-      </div>
-
-      <div class="doc-bulk">
-        <button class="table-btn" type="button" data-message="Bulk approval requires selected documents">Bulk Approve</button>
-        <button class="table-btn" type="button" data-message="Bulk rejection requires selected documents">Bulk Reject</button>
-        <button class="table-btn" type="button" data-message="Bulk archive requires selected documents">Bulk Archive</button>
-        <button class="table-btn" type="button" data-message="Bulk download requires selected documents">Bulk Download</button>
-        <button class="table-btn" type="button" data-message="Bulk assignment requires selected documents">Bulk Assign</button>
-        <button class="table-btn" type="button" data-message="Bulk move requires selected documents">Bulk Move</button>
-        <button class="table-btn" type="button" data-message="Bulk delete requires confirmation">Bulk Delete</button>
-        <button class="table-btn" type="button" data-message="Selected documents exported">Export Selected</button>
-        <button class="table-btn" type="button" data-message="Trash opened">Trash</button>
-        <span class="sa-muted">0 selected</span>
-      </div>
-
+     <div class="quick-grid">
       <div class="panel">
-        <div class="panel-head"><h3>Documents</h3></div>
-        <div class="table-wrap doc-table-wrap">
-          <table class="doc-table">
-            <thead><tr><th>Select</th><th>Document</th><th>Category</th><th>Owner</th><th>Department</th><th>Version</th><th>Status</th><th>Expiry</th><th>Updated</th><th>Actions</th></tr></thead>
-            <tbody class="doc-body">
-              <tr><td colspan="10" class="doc-empty"><span class="file-icon">▤</span><br>No documents have been added yet.<br><button class="table-btn" type="button" id="adminUploadFirstBtn" style="margin-top:12px">Upload First Document</button></td></tr>
-            </tbody>
-          </table>
-        </div>
+       <div class="panel-head"><h3>Recent Documents</h3><button class="link" data-open-view="adminDocs">View all</button></div>
+       <div class="table-wrap"><table><thead><tr><th>Document</th><th>Category</th><th>Owner</th><th>Status</th><th>Updated</th><th>Action</th></tr></thead>
+       <tbody>
+        <tr><td class="doc-cell"><span class="file-icon">PDF</span>AI Policy.pdf</td><td>AI Governance</td><td>Admin</td><td><span class="badge green">Approved</span></td><td>5 min ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
+        <tr><td class="doc-cell"><span class="file-icon">PDF</span>Risk Assessment</td><td>Risk Management</td><td>Manager</td><td><span class="badge amber">Under Review</span></td><td>20 min ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
+        <tr><td class="doc-cell"><span class="file-icon">PDF</span>Compliance Evidence</td><td>Evidence</td><td>CISO</td><td><span class="badge blue">Draft</span></td><td>2 hrs ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
+       </tbody></table></div>
+      </div>
+      <div class="panel">
+       <div class="panel-head"><h3>Recent Activity</h3></div>
+       <div class="activity">
+        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Document uploaded</b><br>AI Policy.pdf</p><small>5 minutes ago</small></div></div>
+        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Approval completed</b><br>Risk Assessment</p><small>20 minutes ago</small></div></div>
+        <div class="activity-item"><span class="activity-dot"></span><div><p><b>User updated</b><br>Manager account</p><small>1 hour ago</small></div></div>
+        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Evidence added</b><br>Control A.6</p><small>2 hours ago</small></div></div>
+       </div>
+      </div>
+     </div>
+
+     <div class="admin-dashboard-sections">
+      <div class="panel admin-dashboard-card">
+       <div class="panel-head"><h3>Compliance Overview</h3><button class="link page-action" data-message="Compliance overview opened">View Compliance</button></div>
+       <div class="compliance-progress"><div class="compliance-score"><span>Overall Compliance</span><strong>82%</strong></div><div class="progress-track"><div class="progress-fill"></div></div><div class="metric-list">
+        <div class="metric-row"><span>Implemented</span><strong>82%</strong></div><div class="metric-row"><span>In Progress</span><strong>10%</strong></div><div class="metric-row"><span>Pending</span><strong>5%</strong></div><div class="metric-row"><span>Not Applicable</span><strong>3%</strong></div>
+       </div></div>
       </div>
 
-      <div class="panel" style="margin-top:16px">
-        <div class="panel-head"><h3>Document Workflow</h3></div>
-        <div style="padding:20px;display:flex;gap:10px;flex-wrap:wrap;align-items:center">
-          <span class="badge blue">Draft</span><span>→</span><span class="badge blue">Submitted</span><span>→</span><span class="badge amber">Under Review</span><span>→</span><span class="badge amber">Correction Required</span><span>→</span><span class="badge green">Approved</span><span>→</span><span class="badge">Archived</span>
-          <span style="margin-left:8px">Rejected → Edit → Resubmit</span>
-        </div>
+      <div class="panel admin-dashboard-card">
+       <div class="panel-head"><h3>AI Governance</h3><button class="link page-action" data-message="AI Systems overview opened">View AI Systems</button></div>
+       <div class="metric-list"><div class="metric-row"><span>Total AI Systems</span><strong>12</strong></div><div class="metric-row"><span>Under Assessment</span><strong>3</strong></div><div class="metric-row"><span>High Risk</span><strong>2</strong></div><div class="metric-row"><span>Approved</span><strong>7</strong></div></div>
       </div>
 
-      <div class="panel" style="margin-top:16px">
-        <div class="panel-head"><h3>Document Details &amp; Version Control</h3></div>
-        <div style="padding:20px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
-          <div><b>Document Details</b><p class="sa-muted">Document ID · Name · Category · Department · Owner · Version · Approval Status · Expiry Date · Created By · Created Date · Last Updated</p></div>
-          <div><b>Approval History</b><p class="sa-muted">Reviewers, decisions, comments and timestamps.</p></div>
-          <div><b>Version History</b><p class="sa-muted">Current and previous versions with uploader, date, change summary and approval status.</p></div>
-        </div>
-        <div style="padding:0 20px 20px"><b>Document Actions</b><p class="sa-muted">View · Edit · Download · Version History · Submit for Approval · Archive · Delete</p></div>
+      <div class="panel admin-dashboard-card">
+       <div class="panel-head"><h3>Risk Overview</h3><button class="link page-action" data-message="Risk Register opened">View Risk Register</button></div>
+       <div class="metric-list"><div class="metric-row"><span>Critical</span><strong>2</strong></div><div class="metric-row"><span>High</span><strong>5</strong></div><div class="metric-row"><span>Medium</span><strong>8</strong></div><div class="metric-row"><span>Low</span><strong>12</strong></div></div>
       </div>
 
-      <div class="panel" style="margin-top:16px">
-        <div class="panel-head"><h3>Expiry Management</h3></div>
-        <div class="doc-empty">No documents are currently expiring. When available, expiry records will show Document Name, Owner, Expiry Date, Days Remaining, Status and Renew action.</div>
+      <div class="panel admin-dashboard-card">
+       <div class="panel-head"><h3>Approval Workflow</h3><button class="link" data-open-view="adminApprovals">View Approvals</button></div>
+       <div class="metric-list"><div class="metric-row"><span>Pending Review</span><strong>8</strong></div><div class="metric-row"><span>Approved</span><strong>24</strong></div><div class="metric-row"><span>Rejected</span><strong>2</strong></div><div class="metric-row"><span>Overdue</span><strong>3</strong></div></div>
       </div>
+
+      <div class="panel admin-dashboard-card">
+       <div class="panel-head"><h3>Quick Actions</h3></div>
+       <div class="quick-actions">
+        <button class="action" data-open-view="adminDocs">+ Add Document</button>
+        <button class="table-btn page-action" data-message="Add AI System form opened">+ Add AI System</button>
+        <button class="table-btn page-action" data-message="Add Risk form opened">+ Add Risk</button>
+        <button class="table-btn page-action" data-message="Create Policy form opened">+ Create Policy</button>
+        <button class="table-btn page-action" data-message="Add Evidence form opened">+ Add Evidence</button>
+        <button class="table-btn page-action" data-message="Create Assessment form opened">+ Create Assessment</button>
+        <button class="table-btn" data-open-view="adminApprovals">View Approvals</button>
+       </div>
+      </div>
+
+      <div class="panel admin-dashboard-card">
+       <div class="panel-head"><h3>Important Alerts</h3></div>
+       <div class="alert-list">
+        <div class="alert-item"><span class="alert-dot"></span><span>3 documents expire within 7 days</span></div>
+        <div class="alert-item"><span class="alert-dot"></span><span>2 high-risk AI systems require review</span></div>
+        <div class="alert-item"><span class="alert-dot"></span><span>5 approvals are pending</span></div>
+        <div class="alert-item"><span class="alert-dot"></span><span>1 compliance finding is overdue</span></div>
+        <div class="alert-item"><span class="alert-dot"></span><span>2 security alerts require attention</span></div>
+       </div>
+      </div>
+     </div>
     </section>
+    <section class="portal-view" id="adminDocs"><div class="welcome"><div><h1>All Documents</h1><p>Review, approve and manage customer documents.</p></div><button class="action" id="adminUploadBtn">+ Upload Document</button></div><div class="panel"><div class="panel-head"><h3>Document Register</h3><input class="search-mini table-search" placeholder="Search documents..."></div><div class="table-wrap"><table><thead><tr><th>Document</th><th>Category</th><th>Customer</th><th>Reference</th><th>Expiry</th><th>Status</th><th>Action</th></tr></thead><tbody class="doc-body"><tr><td class="doc-cell"><span class="file-icon">PDF</span>Sale Deed – Green Acres</td><td>Title Deed</td><td>Arun Kumar</td><td>REG/2026/1842</td><td>—</td><td><span class="badge green">Verified</span></td><td><button class="table-btn">View</button></td></tr></tbody></table></div></div></section>
     <section class="portal-view" id="adminCustomers"><div class="welcome"><div><h1>Customer Accounts</h1><p>Create login accounts and give the credentials to customers.</p></div></div><div class="panel"><div class="panel-head"><h3>Create Customer Account</h3></div><form id="customerAccountForm" style="padding:20px"><div class="grid"><div class="field"><label>Customer name</label><div class="input-wrap"><input id="newCustomerName" required placeholder="Full name" style="padding-left:14px"></div></div><div class="field"><label>Phone number</label><div class="input-wrap"><input id="newCustomerPhone" required placeholder="Phone number" style="padding-left:14px"></div></div><div class="field"><label>Email address</label><div class="input-wrap"><input id="newCustomerEmail" type="email" required placeholder="name@example.com" style="padding-left:14px"></div></div><div class="field"><label>Temporary password</label><div class="input-wrap"><input id="newCustomerPassword" type="password" minlength="6" required placeholder="Minimum 6 characters" style="padding-left:14px"><button type="button" class="eye" data-toggle="newCustomerPassword" aria-label="Show password"><svg class="eye-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg><svg class="eye-off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m3 3 18 18"/></svg></button></div></div></div><div class="field"><label>Status</label><select id="newCustomerStatus"><option>Active</option><option>Inactive</option></select></div><button class="action" type="submit">Create Account</button><div id="customerAccountMsg" class="message" style="margin-top:15px"></div></form></div><div class="panel"><div class="panel-head"><h3>Created Customers</h3></div><div class="table-wrap"><table><thead><tr><th>Customer</th><th>Email</th><th>Phone</th><th>Status</th></tr></thead><tbody id="customerAccountRows"></tbody></table></div></div></section>
     <section class="portal-view" id="adminProperties"><div class="welcome"><div><h1>Properties</h1><p>Manage customer properties and linked ownership records.</p></div><button class="action page-action" data-message="Add Property form opened">+ Add Property</button></div><div class="stats"><div class="stat"><div class="stat-head">Total Properties</div><strong>36</strong><small>Across 28 customers</small></div><div class="stat"><div class="stat-head">Verified</div><strong>29</strong><small>Ownership checked</small></div><div class="stat"><div class="stat-head">Pending</div><strong>5</strong><small>Awaiting documents</small></div><div class="stat"><div class="stat-head">Disputed</div><strong>2</strong><small>Requires review</small></div></div><div class="panel"><div class="panel-head"><h3>Property Register</h3><input class="search-mini table-search" placeholder="Search properties..."></div><div class="table-wrap"><table><thead><tr><th>Property</th><th>Owner</th><th>Location</th><th>Documents</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>Green Acres Plot 12</td><td>Arun Kumar</td><td>Chennai</td><td>6</td><td><span class="badge green">Verified</span></td><td><button class="table-btn page-action" data-message="Property details opened">View</button></td></tr><tr><td>Anna Nagar Plot 18</td><td>Priya S.</td><td>Chennai</td><td>4</td><td><span class="badge amber">Pending</span></td><td><button class="table-btn page-action" data-message="Property review opened">Review</button></td></tr></tbody></table></div></div></section>
     <section class="portal-view" id="adminCases"><div class="welcome"><div><h1>Legal Cases</h1><p>Track case documents, hearings and assigned legal teams.</p></div><button class="action page-action" data-message="Add Legal Case form opened">+ Add Case</button></div><div class="panel"><div class="panel-head"><h3>Case Register</h3><input class="search-mini table-search" placeholder="Search cases..."></div><div class="table-wrap"><table><thead><tr><th>Case No.</th><th>Case Title</th><th>Customer</th><th>Next Hearing</th><th>Status</th><th>Action</th></tr></thead><tbody><tr><td>CS/284/2026</td><td>Property Boundary Dispute</td><td>Ravi Legal</td><td>18 Sep 2026</td><td><span class="badge blue">Active</span></td><td><button class="table-btn page-action" data-message="Case details opened">View</button></td></tr><tr><td>OP/119/2026</td><td>Ownership Petition</td><td>Arun Kumar</td><td>02 Oct 2026</td><td><span class="badge amber">Pending</span></td><td><button class="table-btn page-action" data-message="Case review opened">Review</button></td></tr></tbody></table></div></div></section>
@@ -266,6 +267,8 @@
         if(!['active','pending_invite'].includes(access.status)){await supabaseClient.auth.signOut();message("loginMsg","Administrator profile is missing, inactive, suspended or locked.","error");return}
         if(!accountRole){await supabaseClient.auth.signOut();message("loginMsg","This account does not have Admin Portal access.","error");return}
         if(selectedRole!==accountRole){await supabaseClient.auth.signOut();message("loginMsg",accountRole==="superadmin"?"This is a Super Admin account. Select Super Administrator.":"This is an Administrator account. Select Administrator.","error");return}
+        // Admin accounts must enter the Admin Portal directly after a successful login.
+        // Do not block normal Admin login with the Set Your Password modal.
         const isSuperAdmin=accountRole==="superadmin";
         enterAdminPortal(isSuperAdmin);
       }catch(error){message("loginMsg","Unable to connect to Supabase. Check your internet connection.","error")}
@@ -301,6 +304,38 @@ document.addEventListener("DOMContentLoaded",function(){
     try{emailInput.setSelectionRange(start,end)}catch(e){}
   });
 });
+</script>
+
+<script>
+// FINAL ADMIN LOGIN SAFETY: never show the Set Your Password modal automatically.
+// Normal Admin accounts must enter the Admin Portal directly after successful login.
+(function(){
+  const blockPasswordSetupModal=()=>{
+    document.querySelectorAll('dialog, [role="dialog"]').forEach(el=>{
+      const t=(el.textContent||'').trim().toLowerCase();
+      if(t.includes('set your password') || t.includes('save password')){
+        try{el.close?.()}catch(e){}
+        if(el.parentNode) el.remove();
+      }
+    });
+  };
+  blockPasswordSetupModal();
+  new MutationObserver(blockPasswordSetupModal).observe(document.documentElement,{subtree:true,childList:true});
+  const originalShowDialog=window.showDialog;
+  if(typeof originalShowDialog==='function'){
+    window.showDialog=function(title,body){
+      if(String(title||'').toLowerCase().includes('set your password')) return;
+      return originalShowDialog.apply(this,arguments);
+    };
+  }
+  const originalModal=window.modal;
+  if(typeof originalModal==='function'){
+    window.modal=function(title,body){
+      if(String(title||'').toLowerCase().includes('set your password')) return;
+      return originalModal.apply(this,arguments);
+    };
+  }
+})();
 </script>
 </body>
 <style>
@@ -903,18 +938,8 @@ if(action==='password'){document.querySelector('#saProfileMenu [data-profile="pa
 showDialog(action==='delete'?'Delete Administrator':'Confirm Account Action','<p style="margin-top:20px">'+esc(action)+' — '+esc(a.email)+'</p><p class="sa-muted">'+(action==='delete'?'Are you sure you want to delete this administrator? Login access will be disabled and the account removed from this list. Activity history, including document approvals and rejections, will be retained.':'The server will verify permissions before applying this action.')+'</p><form>'+input('Type the administrator email to confirm','confirm','','email')+'<button class="action">Confirm</button><p role="alert" class="sa-error"></p></form>');dialog.querySelector('form').onsubmit=async ev=>{ev.preventDefault();const f=ev.target,out=f.querySelector('p');if(f.elements.confirm.value.trim().toLowerCase()!==a.email.toLowerCase()){out.textContent='Email does not match.';return}f.querySelector('button').disabled=true;try{await api(action,{user_id:a.user_id});dialog.close();await load()}catch(ex){out.textContent=ex.message}finally{f.querySelector('button').disabled=false}};
 };
 let shown=false;new MutationObserver(()=>{const now=portal.classList.contains('super-admin')&&portal.classList.contains('show');if(now&&!shown){shown=true;load()}else if(!now&&shown){shown=false;dialog.close();rows=[];current=null;draw()}}).observe(portal,{attributes:true,attributeFilter:['class']});draw();
-// Automatic password-setup modal intentionally disabled. Admin accounts sign in directly to the Admin Portal.
-// Safety guard: if an older cached handler creates this legacy modal, close/remove it immediately.
-function removeLegacyPasswordModal(){
-  document.querySelectorAll('dialog').forEach(d=>{
-    const t=(d.textContent||'').trim();
-    if(/Set Your Password|Save Password/.test(t)) { try{d.close()}catch(e){}; d.remove(); }
-  });
-}
-removeLegacyPasswordModal();
-new MutationObserver(removeLegacyPasswordModal).observe(document.body,{childList:true,subtree:true});
+// Password setup modal intentionally disabled for Admin Portal login.
 
-})();
 </script>
 
 <style>
