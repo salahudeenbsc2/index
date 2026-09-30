@@ -122,58 +122,49 @@ window.addEventListener("load",killPasswordSetup);
      <div class="welcome"><div><h1>Good morning, Admin 👋</h1><p>Here’s an overview of your organization’s AI governance and compliance activities.</p></div><button class="action" data-open-view="adminDocs">+ Add Document</button></div>
 
      <div class="stats">
-      <div class="stat"><div class="stat-head">Total Documents <span class="stat-icon">▤</span></div><strong>0</strong><small>Total number of documents</small></div>
-      <div class="stat"><div class="stat-head">AI Systems <span class="stat-icon">◈</span></div><strong>12</strong><small>Registered AI systems</small></div>
-      <div class="stat"><div class="stat-head">Pending Approvals <span class="stat-icon">✓</span></div><strong>8</strong><small>Approval workflow status</small></div>
-      <div class="stat"><div class="stat-head">Compliance Score <span class="stat-icon">%</span></div><strong>82%</strong><small>Current compliance status</small></div>
-      <div class="stat"><div class="stat-head">Open Risks <span class="stat-icon">!</span></div><strong>27</strong><small>Active risks</small></div>
-      <div class="stat"><div class="stat-head">Open Findings <span class="stat-icon">⚑</span></div><strong>1</strong><small>Audit/nonconformity findings</small></div>
-      <div class="stat"><div class="stat-head">Expiring Soon <span class="stat-icon">◷</span></div><strong>3</strong><small>Documents/certifications nearing expiry</small></div>
-      <div class="stat"><div class="stat-head">Active Users <span class="stat-icon">♙</span></div><strong>0</strong><small>Organization users</small></div>
+      <div class="stat"><div class="stat-head">Total Documents <span class="stat-icon">▤</span></div><strong id="adTotalDocs">0</strong><small>Total number of documents</small></div>
+      <div class="stat"><div class="stat-head">AI Systems <span class="stat-icon">◈</span></div><strong id="adAiSystems">0</strong><small>Registered AI systems</small></div>
+      <div class="stat"><div class="stat-head">Pending Approvals <span class="stat-icon">✓</span></div><strong id="adPendingApprovals">0</strong><small>Approval workflow status</small></div>
+      <div class="stat"><div class="stat-head">Compliance Score <span class="stat-icon">%</span></div><strong id="adComplianceScore">0%</strong><small>Current compliance status</small></div>
+      <div class="stat"><div class="stat-head">Open Risks <span class="stat-icon">!</span></div><strong id="adOpenRisks">0</strong><small>Active risks</small></div>
+      <div class="stat"><div class="stat-head">Open Findings <span class="stat-icon">⚑</span></div><strong id="adOpenFindings">0</strong><small>Audit/nonconformity findings</small></div>
+      <div class="stat"><div class="stat-head">Expiring Soon <span class="stat-icon">◷</span></div><strong id="adExpiringSoon">0</strong><small>Documents/certifications nearing expiry</small></div>
+      <div class="stat"><div class="stat-head">Active Users <span class="stat-icon">♙</span></div><strong id="adActiveUsers">0</strong><small>Organization users</small></div>
      </div>
 
      <div class="quick-grid">
       <div class="panel">
        <div class="panel-head"><h3>Recent Documents</h3><button class="link" data-open-view="adminDocs">View all</button></div>
        <div class="table-wrap"><table><thead><tr><th>Document</th><th>Category</th><th>Owner</th><th>Status</th><th>Updated</th><th>Action</th></tr></thead>
-       <tbody>
-        <tr><td class="doc-cell"><span class="file-icon">PDF</span>AI Policy.pdf</td><td>AI Governance</td><td>Admin</td><td><span class="badge green">Approved</span></td><td>5 min ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
-        <tr><td class="doc-cell"><span class="file-icon">PDF</span>Risk Assessment</td><td>Risk Management</td><td>Manager</td><td><span class="badge amber">Under Review</span></td><td>20 min ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
-        <tr><td class="doc-cell"><span class="file-icon">PDF</span>Compliance Evidence</td><td>Evidence</td><td>CISO</td><td><span class="badge blue">Draft</span></td><td>2 hrs ago</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>
-       </tbody></table></div>
+       <tbody id="adRecentDocs"><tr><td colspan="6" style="text-align:center;color:#71808d">No documents available.</td></tr></tbody></table></div>
       </div>
       <div class="panel">
        <div class="panel-head"><h3>Recent Activity</h3></div>
-       <div class="activity">
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Document uploaded</b><br>AI Policy.pdf</p><small>5 minutes ago</small></div></div>
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Approval completed</b><br>Risk Assessment</p><small>20 minutes ago</small></div></div>
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>User updated</b><br>Manager account</p><small>1 hour ago</small></div></div>
-        <div class="activity-item"><span class="activity-dot"></span><div><p><b>Evidence added</b><br>Control A.6</p><small>2 hours ago</small></div></div>
-       </div>
+       <div class="activity" id="adRecentActivity"><div style="padding:20px;color:#71808d">No recent activity.</div></div>
       </div>
      </div>
 
      <div class="admin-dashboard-sections">
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>Compliance Overview</h3><button class="link page-action" data-message="Compliance overview opened">View Compliance</button></div>
-       <div class="compliance-progress"><div class="compliance-score"><span>Overall Compliance</span><strong>82%</strong></div><div class="progress-track"><div class="progress-fill"></div></div><div class="metric-list">
-        <div class="metric-row"><span>Implemented</span><strong>82%</strong></div><div class="metric-row"><span>In Progress</span><strong>10%</strong></div><div class="metric-row"><span>Pending</span><strong>5%</strong></div><div class="metric-row"><span>Not Applicable</span><strong>3%</strong></div>
+       <div class="compliance-progress"><div class="compliance-score"><span>Overall Compliance</span><strong id="adComplianceOverall">0%</strong></div><div class="progress-track"><div id="adComplianceBar" class="progress-fill" style="width:0%"></div></div><div class="metric-list">
+        <div class="metric-row"><span>Implemented</span><strong id="adImplemented">0%</strong></div><div class="metric-row"><span>In Progress</span><strong id="adInProgress">0%</strong></div><div class="metric-row"><span>Pending</span><strong id="adPendingCompliance">0%</strong></div><div class="metric-row"><span>Not Applicable</span><strong id="adNotApplicable">0%</strong></div>
        </div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>AI Governance</h3><button class="link page-action" data-message="AI Systems overview opened">View AI Systems</button></div>
-       <div class="metric-list"><div class="metric-row"><span>Total AI Systems</span><strong>12</strong></div><div class="metric-row"><span>Under Assessment</span><strong>3</strong></div><div class="metric-row"><span>High Risk</span><strong>2</strong></div><div class="metric-row"><span>Approved</span><strong>7</strong></div></div>
+       <div class="metric-list"><div class="metric-row"><span>Total AI Systems</span><strong id="adAiTotal">0</strong></div><div class="metric-row"><span>Under Assessment</span><strong id="adAiAssessment">0</strong></div><div class="metric-row"><span>High Risk</span><strong id="adAiHighRisk">0</strong></div><div class="metric-row"><span>Approved</span><strong id="adAiApproved">0</strong></div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>Risk Overview</h3><button class="link page-action" data-message="Risk Register opened">View Risk Register</button></div>
-       <div class="metric-list"><div class="metric-row"><span>Critical</span><strong>2</strong></div><div class="metric-row"><span>High</span><strong>5</strong></div><div class="metric-row"><span>Medium</span><strong>8</strong></div><div class="metric-row"><span>Low</span><strong>12</strong></div></div>
+       <div class="metric-list"><div class="metric-row"><span>Critical</span><strong id="adRiskCritical">0</strong></div><div class="metric-row"><span>High</span><strong id="adRiskHigh">0</strong></div><div class="metric-row"><span>Medium</span><strong id="adRiskMedium">0</strong></div><div class="metric-row"><span>Low</span><strong id="adRiskLow">0</strong></div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
        <div class="panel-head"><h3>Approval Workflow</h3><button class="link" data-open-view="adminApprovals">View Approvals</button></div>
-       <div class="metric-list"><div class="metric-row"><span>Pending Review</span><strong>8</strong></div><div class="metric-row"><span>Approved</span><strong>24</strong></div><div class="metric-row"><span>Rejected</span><strong>2</strong></div><div class="metric-row"><span>Overdue</span><strong>3</strong></div></div>
+       <div class="metric-list"><div class="metric-row"><span>Pending Review</span><strong id="adApprovalPending">0</strong></div><div class="metric-row"><span>Approved</span><strong id="adApprovalApproved">0</strong></div><div class="metric-row"><span>Rejected</span><strong id="adApprovalRejected">0</strong></div><div class="metric-row"><span>Overdue</span><strong id="adApprovalOverdue">0</strong></div></div>
       </div>
 
       <div class="panel admin-dashboard-card">
@@ -277,7 +268,7 @@ window.addEventListener("load",killPasswordSetup);
     document.querySelectorAll(".portal-logout").forEach(b=>b.addEventListener("click",async()=>{await supabaseClient.auth.signOut();adminPortal.classList.remove("show","super-admin");customerPortal.classList.remove("show");auth.style.display="grid";login.reset();message("loginMsg","","ok");document.getElementById("portalRoleTitle").textContent="Admin Portal";document.getElementById("portalRoleName").textContent="Administrator";document.getElementById("sideRoleLabel").textContent="ADMIN PORTAL";show("login")}));
     document.querySelectorAll(".hamb").forEach(b=>b.addEventListener("click",()=>{const portal=b.closest(".portal");portal.querySelector(".sidebar").classList.add("open");portal.querySelector(".mobile-overlay").classList.add("open")}));
     document.querySelectorAll(".mobile-overlay").forEach(o=>o.addEventListener("click",()=>{o.classList.remove("open");o.parentElement.querySelector(".sidebar").classList.remove("open")}));
-    function bindViews(prefix){document.querySelectorAll(`[data-${prefix}-view]`).forEach(b=>b.addEventListener("click",()=>{const portal=b.closest(".portal");portal.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");portal.querySelectorAll(".portal-view").forEach(x=>x.classList.remove("active"));document.getElementById(b.dataset[prefix+"View"]).classList.add("active");portal.querySelector(".sidebar").classList.remove("open");portal.querySelector(".mobile-overlay").classList.remove("open")}))}
+    function bindViews(prefix){document.querySelectorAll(`[data-${prefix}-view]`).forEach(b=>b.addEventListener("click",()=>{const portal=b.closest(".portal");portal.querySelectorAll(".nav button").forEach(x=>x.classList.remove("active"));b.classList.add("active");portal.querySelectorAll(".portal-view").forEach(x=>x.classList.remove("active"));document.getElementById(b.dataset[prefix+"View"]).classList.add("active");if(b.dataset[prefix+"View"]==='adminDash')updateAdminDashboardFresh();portal.querySelector(".sidebar").classList.remove("open");portal.querySelector(".mobile-overlay").classList.remove("open")}))}
     bindViews("admin");bindViews("customer");
     document.querySelectorAll("[data-open-view]").forEach(b=>b.addEventListener("click",()=>{const id=b.dataset.openView,portal=b.closest(".portal");portal.querySelectorAll(".portal-view").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active")}));
     document.querySelectorAll(".table-search").forEach(input=>input.addEventListener("input",()=>{input.closest(".panel").querySelectorAll("tbody tr").forEach(r=>r.style.display=r.textContent.toLowerCase().includes(input.value.toLowerCase())?"":"none")}));
@@ -466,9 +457,33 @@ modal(action==='Archived'?'Archive Customer Account':'Confirm Customer Action','
 async function caClick(a,id){if(a==='ca-create')caForm();else if(a==='ca-refresh')await caLoad();else if(a==='ca-card'){caFilters={card:id};caPage=1;render()}else if(a==='ca-reset'){caFilters={};caPage=1;render()}else if(a==='ca-prev'){caPage--;render()}else if(a==='ca-next'){caPage++;render()}else if(a==='ca-export'){const cols=['customer_id','full_name','email','phone','customer_type','total_documents','total_properties','total_legal_cases','created_at','last_login','verification_status','status'];const cell=v=>'"'+String(v??'').replace(/^[=+@-]/,"'$&").replaceAll('"','""')+'"';saveBlob(new Blob(['\uFEFF'+[cols,...caRows.filter(caMatch).map(c=>cols.map(k=>c[k]))].map(r=>r.map(cell).join(',')).join('\r\n')],{type:'text/csv;charset=utf-8'}),'customer-accounts.csv');}}
 
 let syncTask=null;
+function updateAdminDashboardFresh(){
+  const dash=document.getElementById('adminDash'); if(!dash) return;
+  const activeDocs=(docs||[]).filter(d=>!d.deleted_at);
+  const pending=activeDocs.filter(d=>['Uploaded','Submitted','Under Review','Pending','Pending Review'].includes(String(d.status||'')));
+  const approved=activeDocs.filter(d=>String(d.status||'').toLowerCase()==='approved');
+  const rejected=activeDocs.filter(d=>String(d.status||'').toLowerCase()==='rejected');
+  const correction=activeDocs.filter(d=>String(d.status||'').toLowerCase()==='correction required');
+  const expiring=activeDocs.filter(d=>{if(!d.expiry)return false;const t=Date.parse(d.expiry);return Number.isFinite(t)&&t>=Date.now()&&t<=Date.now()+30*86400000});
+  const overdue=pending.filter(d=>d.review_due_at&&Date.parse(d.review_due_at)<Date.now());
+  const set=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=String(v)};
+  set('adTotalDocs',activeDocs.length); set('adAiSystems',0); set('adPendingApprovals',pending.length); set('adComplianceScore','0%'); set('adOpenRisks',0); set('adOpenFindings',0); set('adExpiringSoon',expiring.length); set('adActiveUsers',0);
+  set('adComplianceOverall','0%'); set('adComplianceBar',''); const bar=document.getElementById('adComplianceBar'); if(bar)bar.style.width='0%';
+  ['adImplemented','adInProgress','adPendingCompliance','adNotApplicable','adAiTotal','adAiAssessment','adAiHighRisk','adAiApproved','adRiskCritical','adRiskHigh','adRiskMedium','adRiskLow'].forEach(id=>set(id,0));
+  set('adApprovalPending',pending.length); set('adApprovalApproved',approved.length); set('adApprovalRejected',rejected.length); set('adApprovalOverdue',overdue.length);
+  const tbody=document.getElementById('adRecentDocs');
+  if(tbody){
+    const esc=v=>String(v??'').replace(/[&<>\"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    const rows=activeDocs.slice().sort((a,b)=>Date.parse(b.updated_at||b.created_at||0)-Date.parse(a.updated_at||a.created_at||0)).slice(0,5);
+    tbody.innerHTML=rows.length?rows.map(d=>'<tr><td class="doc-cell"><span class="file-icon">'+esc(String(d.name||'DOC').split('.').pop().toUpperCase().slice(0,4))+'</span>'+esc(d.name||d.document_id||'Untitled')+'</td><td>'+esc(d.category||'—')+'</td><td>'+esc(d.owner_name||d.owner_email||d.owner||'—')+'</td><td><span class="badge '+(String(d.status||'').toLowerCase()==='approved'?'green':String(d.status||'').toLowerCase()==='rejected'?'red':'amber')+'">'+esc(d.status||'Draft')+'</span></td><td>'+esc(typeof dt==='function'?dt(d.updated_at||d.created_at):'—')+'</td><td><button class="table-btn page-action" data-message="Document opened">View</button> <button class="table-btn page-action" data-message="Edit document opened">Edit</button> <button class="table-btn page-action" data-message="Document download started">Download</button></td></tr>').join(''):'<tr><td colspan="6" style="text-align:center;color:#71808d">No documents available.</td></tr>';
+  }
+  const act=document.getElementById('adRecentActivity');
+  if(act){const items=(logs||[]).slice().sort((a,b)=>Date.parse(b.created_at||0)-Date.parse(a.created_at||0)).slice(0,5);act.innerHTML=items.length?items.map(l=>'<div class="activity-item"><span class="activity-dot"></span><div><p><b>'+esc(String(l.action||'Activity'))+'</b><br>'+esc(String(l.document_name||l.description||l.module||''))+'</p><small>'+esc(typeof dt==='function'?dt(l.created_at):'')+'</small></div></div>').join(''):'<div style="padding:20px;color:#71808d">No recent activity.</div>'}
+}
+
 function sync(redraw=true){
  if(syncTask)return syncTask;
- busy=true;syncTask=(async()=>{try{const r=await api('sync');if(!running)return;docs=r.documents||[];categories=r.categories||[];customers=r.customers||[];logs=r.logs||[];reviewers=r.reviewers||[];properties=r.properties||[];legalCases=r.legal_cases||[];caseHearings=r.case_hearings||[];caseNotes=r.case_notes||[];caseStatusHistory=r.case_status_history||[];permissions=r.permissions||{};last=r.synced_at;used=r.storage_used;connected=true;error='';selected=new Set([...selected].filter(id=>docs.some(d=>d.id===id&&!d.deleted_at)))}catch(e){connected=false;permissions={};error=e.message}finally{busy=false;syncTask=null;if(redraw&&running)render()}})();return syncTask;
+ busy=true;syncTask=(async()=>{try{const r=await api('sync');if(!running)return;docs=r.documents||[];categories=r.categories||[];customers=r.customers||[];logs=r.logs||[];reviewers=r.reviewers||[];properties=r.properties||[];legalCases=r.legal_cases||[];caseHearings=r.case_hearings||[];caseNotes=r.case_notes||[];caseStatusHistory=r.case_status_history||[];permissions=r.permissions||{};last=r.synced_at;used=r.storage_used;connected=true;error='';updateAdminDashboardFresh();selected=new Set([...selected].filter(id=>docs.some(d=>d.id===id&&!d.deleted_at)))}catch(e){connected=false;permissions={};error=e.message}finally{busy=false;syncTask=null;if(redraw&&running)render()}})();return syncTask;
 }
 function route(name){page=name;if(name==='Payments'&&portal.classList.contains('super-admin'))queueMicrotask(payLoad);if(name==='Customers'&&portal.classList.contains('super-admin'))queueMicrotask(caLoad);filters={};selected.clear();portal.querySelectorAll('.portal-view').forEach(n=>n.classList.remove('active'));root.classList.add('active');portal.querySelector('.sidebar').classList.remove('open');portal.querySelector('.mobile-overlay').classList.remove('open');render()}
 function badge(d){return '<span class="vc-badge vc-'+d.status.replace(/\s/g,'')+'">'+E(d.status)+'</span>'+(expired(d)&&d.status!=='Expired'?' <span class="vc-badge vc-Expired">Expired</span>':'')}
